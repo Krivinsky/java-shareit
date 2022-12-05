@@ -6,24 +6,25 @@ import ru.practicum.shareit.exeption.NotFoundException;
 import ru.practicum.shareit.exeption.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDtoRequest;
 import ru.practicum.shareit.item.dto.ItemDtoResponse;
+import ru.practicum.shareit.user.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ItemServiceImpl implements ItemService{
+public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
 
     @Override
-    public Item creatItem(ItemDtoRequest itemDtoRequest, Long userId) throws NotFoundException, ValidationException {
-        return itemRepository.creat(itemDtoRequest, userId);
+    public Item creatItem(ItemDtoRequest itemDtoRequest, User user) throws ValidationException {
+        return itemRepository.creat(itemDtoRequest, user);
     }
 
     @Override
-    public Item updateItem(ItemDtoRequest itemDtoRequest, Long userId, Long itemId) throws NotFoundException {
-        return itemRepository.update(itemDtoRequest, userId, itemId);
+    public Item updateItem(ItemDtoRequest itemDtoRequest, User user, Long itemId) throws NotFoundException {
+        return itemRepository.update(itemDtoRequest, user, itemId);
     }
 
     @Override

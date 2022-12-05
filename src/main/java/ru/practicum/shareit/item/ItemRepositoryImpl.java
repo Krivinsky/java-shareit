@@ -5,25 +5,24 @@ import ru.practicum.shareit.exeption.NotFoundException;
 import ru.practicum.shareit.exeption.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDtoRequest;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserRepositoryImpl;
 
 import java.util.*;
 
 @Repository
-public class ItemRepositoryImpl implements ItemRepository{
+public class ItemRepositoryImpl implements ItemRepository {
 
-    Map<Long, Item> items = new HashMap<>();
+    private final Map<Long, Item> items = new HashMap<>();
 
-    protected static Long generateId = 0L;
+    private static Long generateId = 0L;
 
     protected static Long generateId() {
         return ++generateId;
     }
+
     @Override
-    public Item creat(ItemDtoRequest itemDtoRequest, Long userId) throws NotFoundException, ValidationException {
+    public Item creat(ItemDtoRequest itemDtoRequest, User user) throws ValidationException {
         validate(itemDtoRequest);
-        User user = UserRepositoryImpl.getUserIn(userId);
-        Item item = ItemMapper.toItem(itemDtoRequest, userId);
+        Item item = ItemMapper.toItem(itemDtoRequest, user);
         items.put(item.getId(), item);
         return item;
     }
@@ -40,10 +39,10 @@ public class ItemRepositoryImpl implements ItemRepository{
     }
 
     @Override
-    public Item update(ItemDtoRequest itemDtoRequest, Long userId, Long itemId) throws NotFoundException {
+    public Item update(ItemDtoRequest itemDtoRequest, User user, Long itemId) throws NotFoundException {
         Item itemForUpdate = items.get(itemId);
 
-        if (!Objects.equals(itemForUpdate.getOwner().getId(), userId)) {
+        if (!Objects.equals(itemForUpdate.getOwner().getId(), user.getId())) {
             throw new NotFoundException("Только владелец Item может его обновить");
         }
 
@@ -62,7 +61,7 @@ public class ItemRepositoryImpl implements ItemRepository{
 
     @Override
     public Item getItem(Long itemId) throws NotFoundException {
-        if (Objects.isNull(itemId) || itemId <= 0 ){
+        if (Objects.isNull(itemId) || itemId <= 0) {
             throw new NotFoundException("некорректный ID");
         }
         return items.get(itemId);
@@ -85,7 +84,7 @@ public class ItemRepositoryImpl implements ItemRepository{
     }
 
     private void validate(ItemDtoRequest itemDtoRequest) throws ValidationException {
-        if (Objects.isNull(itemDtoRequest.getAvailable())){
+        if (Objects.isNull(itemDtoRequest.getAvailable())) {
             throw new ValidationException("Ошибка в доступности Item");
         }
         if (!itemDtoRequest.getAvailable()) {

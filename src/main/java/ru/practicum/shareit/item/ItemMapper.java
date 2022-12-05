@@ -1,22 +1,21 @@
 package ru.practicum.shareit.item;
 
-import ru.practicum.shareit.exeption.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDtoRequest;
 import ru.practicum.shareit.item.dto.ItemDtoResponse;
-import ru.practicum.shareit.user.UserRepositoryImpl;
+import ru.practicum.shareit.user.User;
 
 import java.util.Objects;
 
 public class ItemMapper {
 
-    public static Item toItem(ItemDtoRequest itemDtoRequest, Long userId) throws NotFoundException {
+    public static Item toItem(ItemDtoRequest itemDtoRequest, User user) {
         if (Objects.isNull(itemDtoRequest.getId())) {
             return new Item(
                     ItemRepositoryImpl.generateId(),
                     itemDtoRequest.getName(),
                     itemDtoRequest.getDescription(),
                     itemDtoRequest.getAvailable(),
-                    UserRepositoryImpl.getUserIn(userId),
+                    user,
                     null //todo
             );
         } else {
@@ -25,7 +24,7 @@ public class ItemMapper {
                     itemDtoRequest.getName(),
                     itemDtoRequest.getDescription(),
                     itemDtoRequest.getAvailable(),
-                    UserRepositoryImpl.getUserIn(userId),
+                    user,
                     null //todo
             );
         }

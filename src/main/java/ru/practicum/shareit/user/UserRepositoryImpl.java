@@ -11,22 +11,12 @@ import java.util.*;
 @Repository
 public class UserRepositoryImpl implements UserRepository {
 
-    protected final static Map<Long, User> users = new HashMap<>();
+    private final Map<Long, User> users = new HashMap<>();
 
     protected static Long generateId = 0L;
 
     protected static Long generateId() {
         return ++generateId;
-    }
-
-    public static User getUserIn(Long userId) throws NotFoundException {
-        User user = users.get(userId);
-        if (Objects.nonNull(user)) {
-            return user;
-        } else {
-            throw new NotFoundException("пользователя с таким ID не существует");
-        }
-
     }
 
     @Override
@@ -54,8 +44,12 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User getUser(Long userId) {
-        return users.get(userId);
+    public User getUser(Long userId) throws NotFoundException {
+        User user = users.get(userId);
+        if (Objects.nonNull(user)) {
+            return user;
+        }
+        throw new NotFoundException("Пользователь не найден");
     }
 
     @Override

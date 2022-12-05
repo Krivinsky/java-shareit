@@ -3,6 +3,7 @@ package ru.practicum.shareit.user;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.exeption.NotFoundException;
 import ru.practicum.shareit.exeption.UserException;
 import ru.practicum.shareit.exeption.ValidationException;
 import ru.practicum.shareit.user.dto.UserDtoRequest;
@@ -37,7 +38,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public UserDtoResponse getUser(@PathVariable Long userId) {
+    public UserDtoResponse getUser(@PathVariable Long userId) throws NotFoundException {
         User user = userService.getUser(userId);
         log.info("получен пользователь с ID - " + user.getId());
         return UserMapper.toUserDtoResponse(user);

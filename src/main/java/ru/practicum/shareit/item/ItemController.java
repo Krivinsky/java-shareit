@@ -7,6 +7,8 @@ import ru.practicum.shareit.exeption.NotFoundException;
 import ru.practicum.shareit.exeption.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDtoRequest;
 import ru.practicum.shareit.item.dto.ItemDtoResponse;
+import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,10 +23,14 @@ import java.util.List;
 public class ItemController {
     private final ItemService itemService;
 
+    private final UserService userService;
+
+
     @PostMapping
     public ItemDtoResponse creatItem(@RequestHeader ("X-Sharer-User-Id") long userId,
                                      @RequestBody ItemDtoRequest itemDtoRequest) throws NotFoundException, ValidationException {
-        Item item = itemService.creatItem(itemDtoRequest, userId);
+        User user = userService.getUser(userId);
+        Item item = itemService.creatItem(itemDtoRequest, user);
         log.info("создан Item - " + item.getName());
         return ItemMapper.itemDtoResponse(item);
     }
@@ -33,7 +39,8 @@ public class ItemController {
     public ItemDtoResponse updateItem(@RequestHeader ("X-Sharer-User-Id") long userId,
                                       @RequestBody ItemDtoRequest itemDtoRequest,
                                       @PathVariable Long itemId) throws NotFoundException {
-        Item item = itemService.updateItem(itemDtoRequest, userId, itemId);
+        User user = userService.getUser(userId);
+        Item item = itemService.updateItem(itemDtoRequest, user, itemId);
         log.info("обновлен Item - " + item.getName());
         return ItemMapper.itemDtoResponse(item);
     }
@@ -41,7 +48,7 @@ public class ItemController {
     @GetMapping
     public List<ItemDtoResponse> getAll(@RequestHeader ("X-Sharer-User-Id") long userId) {
         List<ItemDtoResponse> list = itemService.getAll(userId);
-        log.info("получен список из "+ list.size() + " вещей");
+        log.info("получен список из " + list.size() + " вещей");
         return list;
     }
 
@@ -56,7 +63,7 @@ public class ItemController {
     @GetMapping("/search")
     public List<ItemDtoResponse> search(@RequestHeader ("X-Sharer-User-Id") long userId,
                                   @RequestParam String text) {
-        List <Item> items = itemService.search(text);
+        List<Item> items = itemService.search(text);
         List<ItemDtoResponse> list = new ArrayList<>();
         for (Item i : items) {
             list.add(ItemMapper.itemDtoResponse(i));
