@@ -16,7 +16,7 @@ public class ItemMapper {
                     itemDtoRequest.getDescription(),
                     itemDtoRequest.getAvailable(),
                     user,
-                    null //todo
+                    null
             );
         } else {
             return new Item(
@@ -25,7 +25,7 @@ public class ItemMapper {
                     itemDtoRequest.getDescription(),
                     itemDtoRequest.getAvailable(),
                     user,
-                    null //todo
+                    null
             );
         }
     }

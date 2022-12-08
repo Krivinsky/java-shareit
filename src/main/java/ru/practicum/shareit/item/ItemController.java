@@ -13,9 +13,6 @@ import ru.practicum.shareit.user.UserService;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
 @RestController
 @RequestMapping(path = "/items")
 @RequiredArgsConstructor

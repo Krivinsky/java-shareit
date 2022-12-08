@@ -13,10 +13,10 @@ public class UserRepositoryImpl implements UserRepository {
 
     private final Map<Long, User> users = new HashMap<>();
 
-    protected static Long generateId = 0L;
+    protected static Long generatedId = 0L;
 
     protected static Long generateId() {
-        return ++generateId;
+        return ++generatedId;
     }
 
     @Override

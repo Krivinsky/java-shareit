@@ -12,9 +12,6 @@ import ru.practicum.shareit.user.dto.UserDtoResponse;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * TODO Sprint add-controllers.
- */
 @RestController
 @RequestMapping(path = "/users")
 @RequiredArgsConstructor
@@ -61,4 +58,8 @@ public class UserController {
         userService.deleteUser(userId);
     }
 
+    @PutMapping  //  ("/{userId}")
+    public void put() throws NotFoundException {
+        throw new NotFoundException("такого эндпоинта не существует");
+    }
 }

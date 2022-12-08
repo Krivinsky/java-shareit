@@ -13,10 +13,10 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     private final Map<Long, Item> items = new HashMap<>();
 
-    private static Long generateId = 0L;
+    private static Long generatedId = 0L;
 
     protected static Long generateId() {
-        return ++generateId;
+        return ++generatedId;
     }
 
     @Override
