@@ -1,15 +1,13 @@
 package ru.practicum.shareit.item;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
-/**
- * TODO Sprint add-controllers.
- */
-@Data
-@AllArgsConstructor
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "items")
 public class Item {
 
     Long id;
