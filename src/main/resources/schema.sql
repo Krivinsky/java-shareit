@@ -23,3 +23,13 @@ CREATE TABLE IF NOT EXISTS items
     request_id integer references itemRequests(id)
 );
 
+CREATE TABLE IF NOT EXISTS items
+(
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    begin datetime,
+    finish datetime,
+    item_id integer references items (id),
+    booker integer references users (id),
+    status varchar (50)
+);
+
