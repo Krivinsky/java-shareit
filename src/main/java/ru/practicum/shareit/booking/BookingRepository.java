@@ -2,7 +2,8 @@ package ru.practicum.shareit.booking;
 
 import java.util.List;
 
-public interface BookingService {
+public interface BookingRepository {
+
     Booking creatBooking(Booking booking, Long userId);
 
     Booking updateBooking(Booking booking);

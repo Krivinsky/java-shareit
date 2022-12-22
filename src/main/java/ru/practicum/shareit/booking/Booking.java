@@ -33,4 +33,9 @@ public class Booking {
     User booker;
 
     Status status;
+
+//    @ElementCollection
+//    @CollectionTable(name="status", joinColumns=@JoinColumn(name="item_id"))
+//    @Column(name="name")
+//    private Set<String> tags = new HashSet<>();
 }

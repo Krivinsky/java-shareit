@@ -1,15 +1,15 @@
 package ru.practicum.shareit.booking;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-@Service
-@RequiredArgsConstructor
-public class BookingServiceImpl implements BookingService {
+@Repository
+public class BookingRepositoryImpl implements  BookingRepository {
 
-    private final BookingRepository bookingRepositiry;
+    private final Map<Long, Booking> bookings = new HashMap<>();
     @Override
     public Booking creatBooking(Booking booking, Long userId) {
         return null;
