@@ -9,25 +9,14 @@ import java.util.Objects;
 public class ItemMapper {
 
     public static Item toItem(ItemDtoRequest itemDtoRequest, User user) {
-        if (Objects.isNull(itemDtoRequest.getId())) {
-            return new Item(
-                    ItemRepositoryImpl.generateId(),
-                    itemDtoRequest.getName(),
-                    itemDtoRequest.getDescription(),
-                    itemDtoRequest.getAvailable(),
-                    user,
-                    null
-            );
-        } else {
-            return new Item(
-                    itemDtoRequest.getId(),
-                    itemDtoRequest.getName(),
-                    itemDtoRequest.getDescription(),
-                    itemDtoRequest.getAvailable(),
-                    user,
-                    null
-            );
-        }
+        return new Item(
+            itemDtoRequest.getId(),
+            itemDtoRequest.getName(),
+            itemDtoRequest.getDescription(),
+            itemDtoRequest.getAvailable(),
+            user,
+            null
+        );
     }
 
     public static ItemDtoResponse itemDtoResponse(Item item) {

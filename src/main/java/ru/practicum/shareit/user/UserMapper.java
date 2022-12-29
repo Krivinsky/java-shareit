@@ -7,21 +7,13 @@ import java.util.Objects;
 
 public class UserMapper {
 
-   public static User toUserFromRequest(UserDtoRequest userDtoRequest, Long id) {
-        if (Objects.isNull(id)) {
-            return new User(
-                    UserRepositoryImpl.generateId(),
-                    userDtoRequest.getName(),
-                    userDtoRequest.getEmail()
-            );
-        } else {
-            return new User(
-                    id,
-                    userDtoRequest.getName(),
-                    userDtoRequest.getEmail()
-            );
-        }
-    }
+   public static User toUserFromRequest(UserDtoRequest userDtoRequest) {
+       return new User(
+           userDtoRequest.getId(),
+           userDtoRequest.getName(),
+           userDtoRequest.getEmail()
+       );
+   }
 
     public static UserDtoResponse toUserDtoResponse(User user) {
         return new UserDtoResponse(

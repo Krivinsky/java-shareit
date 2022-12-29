@@ -23,7 +23,8 @@ public class UserRepositoryImpl implements UserRepository {
     public User creatUser(UserDtoRequest userDtoRequest) throws UserException, ValidationException {
         validate(userDtoRequest);
         emailCheck(userDtoRequest);
-        User user = UserMapper.toUserFromRequest(userDtoRequest, null);
+        userDtoRequest.setId(generateId());
+        User user = UserMapper.toUserFromRequest(userDtoRequest);
         users.put(user.getId(), user);
         return user;
     }
