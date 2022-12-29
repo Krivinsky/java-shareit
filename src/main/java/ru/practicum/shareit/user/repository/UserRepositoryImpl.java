@@ -1,9 +1,11 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.repository;
 
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exeption.NotFoundException;
 import ru.practicum.shareit.exeption.UserException;
 import ru.practicum.shareit.exeption.ValidationException;
+import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.dto.UserDtoRequest;
 
 import java.util.*;
@@ -15,7 +17,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     protected static Long generatedId = 0L;
 
-    protected static Long generateId() {
+    public static Long generateId() {
         return ++generatedId;
     }
 

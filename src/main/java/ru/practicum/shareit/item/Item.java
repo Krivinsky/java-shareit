@@ -1,35 +1,50 @@
 package ru.practicum.shareit.item;
 
 import lombok.*;
+import ru.practicum.shareit.Status;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "items", schema = "public")
-@Getter @Setter @ToString
 public class Item {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
-    @Column(name = "name")
-    String name;
+    private String name;
 
-    @Column(name = "description")
-    String description;
+    private String description;
 
-    @Column(name = "available")
-    Boolean available;
+    private Boolean available;
 
-    @Column(name = "user_id")
-    User owner;
+    private User owner;
 
-    @Column(name = "request_id")
-    ItemRequest request;
+    private ItemRequest request;
+
+    @Setter
+    @Getter
+    @AllArgsConstructor
+    public static class ItemBooking {
+        private Long id;
+        private LocalDateTime start;
+        private LocalDateTime end;
+        private Long itemId;
+        private Status status;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class ItemComment {
+        private final Long id;
+        private final String text;
+        private final Long itemId;
+        private final Long authorId;
+        private final String authorName;
+        private final LocalDateTime created;
+    }
+
 }

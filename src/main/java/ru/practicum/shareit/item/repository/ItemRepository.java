@@ -1,8 +1,9 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.item.repository;
 
 
 import ru.practicum.shareit.exeption.NotFoundException;
 import ru.practicum.shareit.exeption.ValidationException;
+import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.dto.ItemDtoRequest;
 import ru.practicum.shareit.user.User;
 

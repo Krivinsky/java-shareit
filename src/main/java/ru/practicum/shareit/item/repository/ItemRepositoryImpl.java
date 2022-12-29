@@ -1,8 +1,10 @@
-package ru.practicum.shareit.item;
+package ru.practicum.shareit.item.repository;
 
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exeption.NotFoundException;
 import ru.practicum.shareit.exeption.ValidationException;
+import ru.practicum.shareit.item.Item;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.dto.ItemDtoRequest;
 import ru.practicum.shareit.user.User;
 
@@ -22,6 +24,9 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public Item creat(ItemDtoRequest itemDtoRequest, User user) throws ValidationException {
         validate(itemDtoRequest);
+        if (Objects.isNull(itemDtoRequest.getId())) {
+            itemDtoRequest.setId(generateId());
+        }
         Item item = ItemMapper.toItem(itemDtoRequest, user);
         items.put(item.getId(), item);
         return item;

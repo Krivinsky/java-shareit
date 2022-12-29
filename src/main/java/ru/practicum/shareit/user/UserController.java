@@ -8,6 +8,8 @@ import ru.practicum.shareit.exeption.UserException;
 import ru.practicum.shareit.exeption.ValidationException;
 import ru.practicum.shareit.user.dto.UserDtoRequest;
 import ru.practicum.shareit.user.dto.UserDtoResponse;
+import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.user.service.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +22,11 @@ public class UserController {
 
     private final UserService userService;
 
+    private UserRepository userRepository;
+
     @PostMapping
     public UserDtoResponse creat(@RequestBody UserDtoRequest userDtoRequest) throws UserException, ValidationException {
-        User user = userService.creatUser(userDtoRequest);
+        User user = userService.create(UserMapper.toUserFromRequest(userDtoRequest, ));
         log.info("создан пользователь с ID - " + user.getId());
         return UserMapper.toUserDtoResponse(user);
     }
@@ -36,7 +40,7 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public UserDtoResponse getUser(@PathVariable Long userId) throws NotFoundException {
-        User user = userService.getUser(userId);
+        User user = userService.getById(userId);
         log.info("получен пользователь с ID - " + user.getId());
         return UserMapper.toUserDtoResponse(user);
     }
@@ -48,6 +52,7 @@ public class UserController {
         for (User user : users) {
             usersResp.add(UserMapper.toUserDtoResponse(user));
         }
+
         log.info("получен список из "  + usersResp.size() + " пользователей ");
         return usersResp;
     }
@@ -55,7 +60,7 @@ public class UserController {
     @DeleteMapping("/{userId}")
     public void deleteUser(@PathVariable Long userId) {
         log.info("удален пользователь с ID " + userId);
-        userService.deleteUser(userId);
+        userService.delete(userId);
     }
 
     @PutMapping  //  ("/{userId}")

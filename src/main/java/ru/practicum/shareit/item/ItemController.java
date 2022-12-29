@@ -3,13 +3,19 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.comment.CommentCreateRequest;
+import ru.practicum.shareit.comment.CommentResponse;
 import ru.practicum.shareit.exeption.NotFoundException;
 import ru.practicum.shareit.exeption.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDtoRequest;
 import ru.practicum.shareit.item.dto.ItemDtoResponse;
+import ru.practicum.shareit.item.mapper.ItemMapper;
+import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserService;
+import ru.practicum.shareit.user.service.UserService;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +32,7 @@ public class ItemController {
     @PostMapping
     public ItemDtoResponse creatItem(@RequestHeader ("X-Sharer-User-Id") long userId,
                                      @RequestBody ItemDtoRequest itemDtoRequest) throws NotFoundException, ValidationException {
-        User user = userService.getUser(userId);
+        User user = userService.getById(userId);
         Item item = itemService.creatItem(itemDtoRequest, user);
         log.info("создан Item - " + item.getName());
         return ItemMapper.itemDtoResponse(item);
@@ -36,7 +42,7 @@ public class ItemController {
     public ItemDtoResponse updateItem(@RequestHeader ("X-Sharer-User-Id") long userId,
                                       @RequestBody ItemDtoRequest itemDtoRequest,
                                       @PathVariable Long itemId) throws NotFoundException {
-        User user = userService.getUser(userId);
+        User user = userService.getById(userId);
         Item item = itemService.updateItem(itemDtoRequest, user, itemId);
         log.info("обновлен Item - " + item.getName());
         return ItemMapper.itemDtoResponse(item);
@@ -58,8 +64,8 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDtoResponse> search(@RequestHeader ("X-Sharer-User-Id") long userId,
-                                  @RequestParam String text) {
+    public List<ItemDtoResponse> search(@RequestHeader ("X-Sharer-User-Id") Long userId,
+                                        @RequestParam String text) {
         List<Item> items = itemService.search(text);
         List<ItemDtoResponse> list = new ArrayList<>();
         for (Item i : items) {
@@ -67,5 +73,12 @@ public class ItemController {
         }
         log.info("получен список из " + list.size() + " вещей");
         return list;
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public CommentResponse create(@Min(1L) @PathVariable Long itemId,
+                                  @RequestHeader ("X-Sharer-User-Id") Long userId,
+                                  @Valid @RequestBody CommentCreateRequest request) {
+        return mapper.toResponse(service.addComment(mapper.toComment(request, itemId, userId)));
     }
 }
