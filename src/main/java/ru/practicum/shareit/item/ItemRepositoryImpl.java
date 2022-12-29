@@ -22,6 +22,9 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public Item creat(ItemDtoRequest itemDtoRequest, User user) throws ValidationException {
         validate(itemDtoRequest);
+        if (Objects.isNull(itemDtoRequest.getId())) {
+            itemDtoRequest.setId(generateId());
+        }
         Item item = ItemMapper.toItem(itemDtoRequest, user);
         items.put(item.getId(), item);
         return item;
