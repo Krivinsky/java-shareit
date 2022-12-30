@@ -1,11 +1,10 @@
-package ru.practicum.shareit.user.repository;
+package ru.practicum.shareit.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import ru.practicum.shareit.exeption.NotFoundException;
 import ru.practicum.shareit.exeption.UserException;
 import ru.practicum.shareit.exeption.ValidationException;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.dto.UserDtoRequest;
 
 import java.util.List;
 

@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.service;
 
-import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingDtoResponse;
 import ru.practicum.shareit.exeption.NotFoundException;
 import ru.practicum.shareit.exeption.StorageException;
 import ru.practicum.shareit.exeption.UnsupportedState;
@@ -10,15 +11,13 @@ import java.util.List;
 
 public interface BookingService {
 
-    Booking creatBooking(Booking booking) throws StorageException;
+    BookingDtoResponse creatBooking(BookingDto bookingDto, Long userId) throws StorageException, NotFoundException;
 
-    Booking approve(Long bookingId, Long userId, Boolean approved) throws NotFoundException, StorageException, ValidationException;
+    BookingDtoResponse updateBooking(Long bookingId, Long userId, Boolean approved) throws NotFoundException, StorageException, ValidationException;
 
-    //Booking updateBooking(Booking booking);
+    BookingDtoResponse getById(Long bookingId, Long userId) throws NotFoundException;
 
-    Booking getById(Long bookingId, Long userId) throws NotFoundException;
+    List<BookingDtoResponse> getAll(Long userId, String state) throws UnsupportedState;
 
-    List<Booking> getAll(Long userId, String state) throws UnsupportedState;
-
-    List<Booking> getOwnerItemsAll(Long userId, String state);
+    List<BookingDtoResponse> getOwnerItemsAll(Long userId, String state);
 }

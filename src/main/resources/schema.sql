@@ -48,5 +48,5 @@ CREATE TABLE IF NOT EXISTS comments
     text VARCHAR(100),
     item_id integer references items (id),
     author_id integer references users (id),
-    preated timestamp without time zone
+    created timestamp without time zone
 );

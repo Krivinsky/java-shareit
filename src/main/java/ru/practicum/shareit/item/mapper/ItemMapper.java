@@ -1,35 +1,24 @@
 package ru.practicum.shareit.item.mapper;
 
 import ru.practicum.shareit.item.Item;
+import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.dto.ItemDtoRequest;
 import ru.practicum.shareit.item.dto.ItemDtoResponse;
-import ru.practicum.shareit.item.repository.ItemRepositoryImpl;
 import ru.practicum.shareit.user.User;
-
-import java.util.Objects;
 
 public class ItemMapper {
 
+
     public static Item toItem(ItemDtoRequest itemDtoRequest, User user) {
-        if (Objects.isNull(itemDtoRequest.getId())) {
-            return new Item(
-                    ItemRepositoryImpl.generateId(),
-                    itemDtoRequest.getName(),
-                    itemDtoRequest.getDescription(),
-                    itemDtoRequest.getAvailable(),
-                    user,
-                    null
-            );
-        } else {
-            return new Item(
-                    itemDtoRequest.getId(),
-                    itemDtoRequest.getName(),
-                    itemDtoRequest.getDescription(),
-                    itemDtoRequest.getAvailable(),
-                    user,
-                    null
-            );
-        }
+        return new Item(
+            itemDtoRequest.getId(),
+            itemDtoRequest.getName(),
+            itemDtoRequest.getDescription(),
+            itemDtoRequest.getAvailable(),
+            user,
+            null
+        );
+
     }
 
     public static ItemDtoResponse itemDtoResponse(Item item) {
@@ -38,10 +27,11 @@ public class ItemMapper {
                 item.getName(),
                 item.getDescription(),
                 item.getAvailable()
+
         );
     }
 
-    //
+//
 //    @Mapping(target = "owner.id", source = "userId")
 //    @Mapping(target = "lastBooking", ignore = true)
 //    @Mapping(target = "nextBooking", ignore = true)

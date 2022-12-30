@@ -8,7 +8,9 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 @AllArgsConstructor
-public class UserDtoRequest {
+public class UserDto {
+
+    Long id;
 
     @NotBlank(message = "некорректное имя")
     String name;

@@ -1,50 +1,39 @@
 package ru.practicum.shareit.item;
 
 import lombok.*;
-import ru.practicum.shareit.Status;
-import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "items", schema = "public")
+@Getter @Setter @ToString
 public class Item {
 
+    @Id
+    @SequenceGenerator(name = "pk_sequence", schema = "public", sequenceName = "items_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pk_sequence")
+    @Column(name = "id", nullable = false, updatable = false, unique = true)
     private Long id;
 
+    @Column(name = "name")
     private String name;
 
+    @Column(name = "description")
     private String description;
 
+    @Column(name = "available")
     private Boolean available;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner_id")
     private User owner;
 
-    private ItemRequest request;
-
-    @Setter
-    @Getter
-    @AllArgsConstructor
-    public static class ItemBooking {
-        private Long id;
-        private LocalDateTime start;
-        private LocalDateTime end;
-        private Long itemId;
-        private Status status;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    public static class ItemComment {
-        private final Long id;
-        private final String text;
-        private final Long itemId;
-        private final Long authorId;
-        private final String authorName;
-        private final LocalDateTime created;
-    }
-
+    @OneToMany(fetch = FetchType.LAZY)
+    @Column(name = "request_id")
+    private List<Item> request;
 }

@@ -3,8 +3,7 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.comment.CommentCreateRequest;
-import ru.practicum.shareit.comment.CommentResponse;
+import ru.practicum.shareit.comment.CommentDto;
 import ru.practicum.shareit.exeption.NotFoundException;
 import ru.practicum.shareit.exeption.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDtoRequest;
@@ -49,7 +48,7 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDtoResponse> getAll(@RequestHeader ("X-Sharer-User-Id") long userId) {
+    public List<ItemDtoResponse> getAll(@RequestHeader ("X-Sharer-User-Id") long userId) throws NotFoundException {
         List<ItemDtoResponse> list = itemService.getAll(userId);
         log.info("получен список из " + list.size() + " вещей");
         return list;
@@ -76,9 +75,9 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentResponse create(@Min(1L) @PathVariable Long itemId,
+    public CommentDto create(@Min(1L) @PathVariable Long itemId,
                                   @RequestHeader ("X-Sharer-User-Id") Long userId,
-                                  @Valid @RequestBody CommentCreateRequest request) {
-        return mapper.toResponse(service.addComment(mapper.toComment(request, itemId, userId)));
+                                  @Valid @RequestBody CommentDto commentDto) {
+        return itemService.creatComment(userId, itemId, commentDto);
     }
 }
