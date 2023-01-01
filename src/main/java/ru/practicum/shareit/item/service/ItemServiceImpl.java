@@ -29,12 +29,12 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
 
-    private final ItemRepository itemRepository;
     private final UserService userService;
 
     private final BookingRepository bookingRepository;
 
-    private final CommentRepository commentRepository;
+    private  final CommentRepository commentRepository;
+    private  final ItemRepository itemRepository;
 
     @Override
     public Item creatItem(ItemDtoRequest itemDtoRequest, User user) throws ValidationException, NotFoundException {

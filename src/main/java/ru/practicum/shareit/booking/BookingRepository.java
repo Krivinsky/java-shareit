@@ -3,12 +3,10 @@ package ru.practicum.shareit.booking;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.user.User;
 
 import java.sql.Timestamp;
 import java.util.List;
-@Repository
 public interface BookingRepository extends CrudRepository<Booking, Long> {
 
     List<Booking> findAllByBookerOrderByStartDesc(User booker);

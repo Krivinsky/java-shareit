@@ -19,8 +19,8 @@ import java.util.List;
 @Transactional                 //----------------------------
 public class BookingServiceImpl implements BookingService {
 
-    private BookingRepository bookingRepository;
-    private ItemService itemService;
+    private final BookingRepository bookingRepository;
+    private final ItemService itemService;
 
     @Override   //todo****************
     public BookingDtoResponse creatBooking(BookingDto bookingDto, Long userId) throws NotFoundException {

@@ -3,9 +3,6 @@ package ru.practicum.shareit.booking.service;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoResponse;
 import ru.practicum.shareit.exeption.NotFoundException;
-import ru.practicum.shareit.exeption.StorageException;
-import ru.practicum.shareit.exeption.UnsupportedState;
-import ru.practicum.shareit.exeption.ValidationException;
 
 import java.util.List;
 
