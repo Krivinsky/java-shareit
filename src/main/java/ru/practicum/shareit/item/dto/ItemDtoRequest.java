@@ -5,7 +5,6 @@ import lombok.Data;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.comment.CommentDto;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,5 +19,5 @@ public class ItemDtoRequest {
     Boolean available;
     private BookingDto lastBooking;
     private BookingDto nextBooking;
-    private List<CommentDto> comments = new ArrayList<>();
+    private List<CommentDto> comments;
 }

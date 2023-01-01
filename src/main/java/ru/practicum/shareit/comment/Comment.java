@@ -5,14 +5,14 @@ import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "comments", schema = "public")
-@Getter @Setter @ToString
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "comments", schema = "public")
 public class Comment {
 
     @Id

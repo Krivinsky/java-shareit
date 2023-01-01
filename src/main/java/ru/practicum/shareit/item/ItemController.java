@@ -57,9 +57,9 @@ public class ItemController {
     @GetMapping("/{itemId}")
     public ItemDtoResponse getItem(@RequestHeader ("X-Sharer-User-Id") long userId,
                                    @PathVariable Long itemId) throws NotFoundException {
-        Item item = itemService.getItem(itemId);
+        ItemDtoResponse item = itemService.getItemComment(itemId, userId);
         log.info("получен Item  - " + item.getName());
-        return ItemMapper.itemDtoResponse(item);
+        return item;
     }
 
     @GetMapping("/search")
@@ -77,7 +77,7 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     public CommentDto create(@Min(1L) @PathVariable Long itemId,
                                   @RequestHeader ("X-Sharer-User-Id") Long userId,
-                                  @Valid @RequestBody CommentDto commentDto) {
+                                  @Valid @RequestBody CommentDto commentDto) throws NotFoundException {
         return itemService.creatComment(userId, itemId, commentDto);
     }
 }

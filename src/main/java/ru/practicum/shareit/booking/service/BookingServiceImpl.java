@@ -3,23 +3,24 @@ package ru.practicum.shareit.booking.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
-import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.BookingDtoResponse;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.BookingRepository;
+import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingDtoResponse;
 import ru.practicum.shareit.exeption.NotFoundException;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.service.ItemService;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional                 //----------------------------
 public class BookingServiceImpl implements BookingService {
 
-    private final BookingRepository bookingRepository;
-    private final ItemService itemService;
-//    private final UserService userService;
+    private BookingRepository bookingRepository;
+    private ItemService itemService;
 
     @Override   //todo****************
     public BookingDtoResponse creatBooking(BookingDto bookingDto, Long userId) throws NotFoundException {
@@ -39,7 +40,7 @@ public class BookingServiceImpl implements BookingService {
         return null;
     }
 
-    @Override   //todo****************
+    @Override
     public List<BookingDtoResponse> getAll(Long userId, String state) {
         return null;
     }

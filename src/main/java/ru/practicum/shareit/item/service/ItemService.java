@@ -17,9 +17,11 @@ public interface ItemService {
 
     List<ItemDtoResponse> getAll(Long userId) throws NotFoundException;
 
+    ItemDtoResponse getItemComment(Long itemId, Long userId) throws NotFoundException;
+
     Item getItem(Long itemId) throws NotFoundException;
 
     List<Item> search(String text);
 
-    CommentDto creatComment(Long userId, Long itemId, CommentDto commentDto);
+    CommentDto creatComment(Long userId, Long itemId, CommentDto commentDto) throws NotFoundException;
 }

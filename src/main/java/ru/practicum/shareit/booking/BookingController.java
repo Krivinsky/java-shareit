@@ -20,33 +20,32 @@ import java.util.List;
 @Slf4j
 public class BookingController {
 
-
     private final BookingService bookingService;
 
     @PostMapping
     public BookingDtoResponse creatBooking(@RequestHeader ("X-Sharer-User-Id") Long userId,
-                                           @RequestBody BookingDto bookingDto) throws StorageException, NotFoundException {
+                                           @RequestBody BookingDto bookingDto) throws NotFoundException {
 
         return bookingService.creatBooking(bookingDto, userId);
     }
 
     @PatchMapping("/{bookingId}")
-    public BookingDtoResponse updateBookingStatus (@RequestHeader ("X-Sharer-User-Id") Long userId,
+    public BookingDtoResponse updateBookingStatus(@RequestHeader("X-Sharer-User-Id") Long userId,
                                                    @PathVariable Long bookingId,
-                                                   @RequestParam("approver") Boolean approved) throws ValidationException, NotFoundException, StorageException {
+                                                   @RequestParam("approver") Boolean approved) {
         return bookingService.updateBooking(bookingId, userId, approved);
     }
 
 
     @GetMapping("/{bookingId}")
-    public BookingDtoResponse getBooking (@RequestHeader ("X-Sharer-User-Id") Long userId,
+    public BookingDtoResponse getBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
                                           @PathVariable Long bookingId) throws NotFoundException {
         return bookingService.getById(bookingId, userId);
     }
 
     @GetMapping
     public List<BookingDtoResponse> getAll(@RequestHeader ("X-Sharer-User-Id") Long userId,
-                                           @RequestParam (value = "state", required = false) String state) throws UnsupportedState {
+                                           @RequestParam (value = "state", required = false) String state) {
 
         return bookingService.getAll(userId, state);
     }

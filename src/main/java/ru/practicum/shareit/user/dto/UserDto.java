@@ -10,11 +10,11 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 public class UserDto {
 
-    Long id;
+    private  Long id;
 
     @NotBlank(message = "некорректное имя")
-    String name;
+    private  String name;
 
     @Email(message = "некорректный email")
-    String email;
+    private  String email;
 }

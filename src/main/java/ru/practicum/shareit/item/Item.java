@@ -6,12 +6,12 @@ import ru.practicum.shareit.user.User;
 import javax.persistence.*;
 import java.util.List;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
+@Getter
+@Setter
 @Table(name = "items", schema = "public")
-@Getter @Setter @ToString
+@AllArgsConstructor
+@NoArgsConstructor
 public class Item {
 
     @Id
@@ -37,3 +37,5 @@ public class Item {
     @Column(name = "request_id")
     private List<Item> request;
 }
+
+

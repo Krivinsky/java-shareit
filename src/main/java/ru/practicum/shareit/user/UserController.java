@@ -4,9 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exeption.NotFoundException;
-import ru.practicum.shareit.exeption.StorageException;
-import ru.practicum.shareit.exeption.UserException;
-import ru.practicum.shareit.exeption.ValidationException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -21,17 +18,18 @@ public class UserController {
 
     private final UserService userService;
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @PostMapping
-    public UserDto creat(@RequestBody UserDto userDto) throws UserException, ValidationException, StorageException, NotFoundException {
-        User user = userService.create(UserMapper.toUser(userDto));
+    public UserDto creat(@RequestBody UserDto userDto) {
+        User user = UserMapper.toUser(userDto);
+        userService.create(user);
         log.info("создан пользователь с ID - " + user.getId());
         return UserMapper.toUserDto(user);
     }
 
     @PatchMapping("/{userId}")
-    public UserDto update(@RequestBody UserDto userDto, @PathVariable Long userId) throws UserException, ValidationException, NotFoundException {
+    public UserDto update(@RequestBody UserDto userDto, @PathVariable Long userId) throws NotFoundException {
         User user = userService.update(userId, UserMapper.toUser(userDto));
         log.info("обновлен пользователь с ID - " + user.getId());
         return UserMapper.toUserDto(user);
