@@ -8,6 +8,7 @@ import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 

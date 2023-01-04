@@ -33,7 +33,9 @@ public class BookingServiceImpl implements BookingService {
 
     private final UserRepository userRepository;
     private final Sort sort = Sort.by(Sort.Direction.DESC, "start");
-    public BookingServiceImpl(BookingRepository bookingRepository, ItemRepository itemRepository, UserRepository userRepository) {
+
+    public BookingServiceImpl(BookingRepository bookingRepository,
+                              ItemRepository itemRepository, UserRepository userRepository) {
         this.bookingRepository = bookingRepository;
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
