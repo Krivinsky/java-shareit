@@ -4,24 +4,22 @@ import ru.practicum.shareit.comment.CommentDto;
 import ru.practicum.shareit.exeption.NotFoundException;
 import ru.practicum.shareit.exeption.ValidationException;
 import ru.practicum.shareit.item.Item;
-import ru.practicum.shareit.item.dto.ItemDtoRequest;
-import ru.practicum.shareit.item.dto.ItemDtoResponse;
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.item.dto.ItemDto;
 
 import java.util.List;
 
 public interface ItemService {
-    Item creatItem(ItemDtoRequest itemDtoRequest, User user) throws ValidationException, NotFoundException;
+    Item creatItem(ItemDto itemDto, Long userId) throws ValidationException, NotFoundException;
 
-    Item updateItem(ItemDtoRequest itemDtoRequest, User user, Long itemId) throws NotFoundException;
+    Item updateItem(ItemDto itemDto, Long userId, Long itemId) throws NotFoundException;
 
-    List<ItemDtoResponse> getAll(Long userId) throws NotFoundException;
+    List<ItemDto> getAll(Long userId) throws NotFoundException;
 
-    ItemDtoResponse getItemComment(Long itemId, Long userId) throws NotFoundException;
+    ItemDto getById(Long itemId, Long userId) throws NotFoundException;
 
     Item getItem(Long itemId) throws NotFoundException;
 
     List<Item> search(String text);
 
-    CommentDto creatComment(Long userId, Long itemId, CommentDto commentDto) throws NotFoundException;
+    CommentDto creatComment(Long userId, Long itemId, CommentDto commentDto) throws NotFoundException, ValidationException;
 }

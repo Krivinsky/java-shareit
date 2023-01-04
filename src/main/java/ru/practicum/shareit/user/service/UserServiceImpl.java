@@ -1,50 +1,49 @@
 package ru.practicum.shareit.user.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exeption.NotFoundException;
-import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import java.util.*;
 
 @Service
-@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    public User create(User user) {
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
+    public User create(User user) {
         return userRepository.save(user);
     }
 
     @Override
-    public User update(Long userId, User user) throws NotFoundException {
+    public User update(Long userId, UserDto userDto) throws NotFoundException {
 
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isEmpty()) {
             throw new NotFoundException("Пользователь не найден");
         }
         User userForUpdate = userOptional.get();
-        if (Objects.nonNull(user.getName())) {
-            userForUpdate.setName(user.getName());
+        if (Objects.nonNull(userDto.getName())) {
+            userForUpdate.setName(userDto.getName());
         }
-        if (Objects.nonNull(user.getEmail())) {
-            userForUpdate.setEmail(user.getEmail());
+        if (Objects.nonNull(userDto.getEmail())) {
+            userForUpdate.setEmail(userDto.getEmail());
         }
-        return userRepository.save(user);
+        return userRepository.save(userForUpdate);
     }
 
     @Override
     public User getById(Long userId) throws NotFoundException {
         Optional<User> userOptional = userRepository.findById(userId);
-
         if (userOptional.isEmpty()) {
             throw new NotFoundException("Пользователь не найден");
         }
-
         return userOptional.get();
     }
 
@@ -61,21 +60,4 @@ public class UserServiceImpl implements UserService {
         return new ArrayList<>(userRepository.findAll());
     }
 
-    @Override
-    public Set<Item> getUserItems(long userId) throws NotFoundException {   //todo
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isEmpty()) {
-            throw new NotFoundException("Пользователь не найден");
-        }
-        return null;
-    }
-
-
-    private void validate(User user) {
-
-    }
-
-    private void emailCheck(User user) {
-
-    }
 }

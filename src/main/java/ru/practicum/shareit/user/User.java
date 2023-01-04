@@ -3,26 +3,30 @@ package ru.practicum.shareit.user;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@ToString
+@Builder
 @Entity
 @Table(name = "users")
 public class User {
 
     @Id
-    @SequenceGenerator(name = "pk_sequence", schema = "public", sequenceName = "users_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pk_sequence")
-    @Column(name = "id", nullable = false, updatable = false, unique = true)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "name", nullable = false)
+    @NotBlank
     private String name;
 
     @Column(name = "email", nullable = false, unique = true)
+    @Email
+    @NotBlank
     private String email;
 
 }

@@ -1,27 +1,28 @@
 package ru.practicum.shareit.user;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exeption.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "/users")
-@RequiredArgsConstructor
 @Slf4j
 public class UserController {
 
     private final UserService userService;
 
-    private final UserRepository userRepository;
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping
-    public UserDto creat(@RequestBody UserDto userDto) {
+    public UserDto creat(@Valid @RequestBody UserDto userDto) {
         User user = UserMapper.toUser(userDto);
         userService.create(user);
         log.info("создан пользователь с ID - " + user.getId());
@@ -30,7 +31,7 @@ public class UserController {
 
     @PatchMapping("/{userId}")
     public UserDto update(@RequestBody UserDto userDto, @PathVariable Long userId) throws NotFoundException {
-        User user = userService.update(userId, UserMapper.toUser(userDto));
+        User user = userService.update(userId, userDto);
         log.info("обновлен пользователь с ID - " + user.getId());
         return UserMapper.toUserDto(user);
     }
@@ -60,7 +61,7 @@ public class UserController {
         userService.delete(userId);
     }
 
-    @PutMapping  //  ("/{userId}")
+    @PutMapping
     public void put() throws NotFoundException {
         throw new NotFoundException("такого эндпоинта не существует");
     }

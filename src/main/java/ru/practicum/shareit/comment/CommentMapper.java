@@ -2,22 +2,19 @@ package ru.practicum.shareit.comment;
 
 public class CommentMapper {
     public static Comment toComment(CommentDto commentDto) {
-        return new Comment(
-                commentDto.getId(),
-                commentDto.getText(),
-                null,
-                null,
-                commentDto.getCreated()
-        );
+        return Comment.builder()
+                .id(commentDto.getId())
+                .text(commentDto.getText())
+                .created(commentDto.getCreated())
+                .build();
     }
 
     public static CommentDto toCommentDto(Comment comment) {
-        return new CommentDto(
-                comment.getId(),
-                comment.getText(),
-                comment.getItem().getId(),
-                comment.getAuthor().getName(),
-                comment.getCreated()
-        );
+        return CommentDto.builder()
+                .id(comment.getId())
+                .text(comment.getText())
+                .authorName(comment.getAuthor().getName())
+                .created(comment.getCreated())
+                .build();
     }
 }

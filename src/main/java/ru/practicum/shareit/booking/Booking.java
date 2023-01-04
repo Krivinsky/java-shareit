@@ -12,12 +12,12 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@Builder
 @Table(schema = "public", name = "bookings")
 public class Booking {
 
     @Id
-    @SequenceGenerator(name = "pk_sequence", schema = "public", sequenceName = "bookings_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pk_sequence")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, updatable = false, unique = true)
     private Long id;
 

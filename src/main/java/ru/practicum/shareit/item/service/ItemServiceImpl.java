@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingMapper;
@@ -13,12 +12,11 @@ import ru.practicum.shareit.comment.CommentRepository;
 import ru.practicum.shareit.exeption.NotFoundException;
 import ru.practicum.shareit.exeption.ValidationException;
 import ru.practicum.shareit.item.Item;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
-import ru.practicum.shareit.item.dto.ItemDtoRequest;
-import ru.practicum.shareit.item.dto.ItemDtoResponse;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -26,109 +24,120 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
-@RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
+    private final ItemRepository itemRepository;
 
-    private final UserService userService;
+    private final UserRepository userRepository;
 
     private final BookingRepository bookingRepository;
 
-    private  final CommentRepository commentRepository;
-    private  final ItemRepository itemRepository;
+    private final CommentRepository commentRepository;
+
+    public ItemServiceImpl(UserRepository userRepository, BookingRepository bookingRepository, CommentRepository commentRepository, ItemRepository itemRepository) {
+        this.userRepository = userRepository;
+        this.bookingRepository = bookingRepository;
+        this.commentRepository = commentRepository;
+        this.itemRepository = itemRepository;
+    }
+
 
     @Override
-    public Item creatItem(ItemDtoRequest itemDtoRequest, User user) throws ValidationException, NotFoundException {
-        validate(itemDtoRequest);
-        if (userService.getById(user.getId()) == null) {
+    public Item creatItem(ItemDto itemDto, Long userId) throws ValidationException, NotFoundException {
+        validate(itemDto);
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
             throw new NotFoundException("такого пользователя нет");
         }
-        Item item = ItemMapper.toItem(itemDtoRequest, user);
+        User user = optionalUser.get();
+        Item item = ItemMapper.toItem(itemDto);
+        item.setOwner(user);
         itemRepository.save(item);
         return item;
     }
 
     @Override
-    public Item updateItem(ItemDtoRequest itemDtoRequest, User user, Long itemId) throws NotFoundException {
+    public Item updateItem(ItemDto itemDto, Long userId, Long itemId) throws NotFoundException {
 
-        Item itemForUpdate = ItemMapper.toItem(itemDtoRequest, user);
-        //возможно проверить есть ли предмет у данного пользователя
-        if (!Objects.equals(itemForUpdate.getOwner().getId(), user.getId())) {
+        Optional<Item> itemOptional = itemRepository.findById(itemId);
+        if (itemOptional.isEmpty()) {
+            throw new NotFoundException("Вещь не найдена");
+        }
+        Item itemForUpdate = itemOptional.get();
+
+        if (!Objects.equals(itemForUpdate.getOwner().getId(), userId)) {
             throw new NotFoundException("Только владелец Item может его обновить");
         }
-        if (Objects.nonNull(itemDtoRequest.getName())) {
-            itemForUpdate.setName(itemDtoRequest.getName());
+        if (Objects.nonNull(itemDto.getName())) {
+            itemForUpdate.setName(itemDto.getName());
         }
-        if (Objects.nonNull(itemDtoRequest.getDescription())) {
-            itemForUpdate.setDescription(itemDtoRequest.getDescription());
+        if (Objects.nonNull(itemDto.getDescription())) {
+            itemForUpdate.setDescription(itemDto.getDescription());
         }
-        if (Objects.nonNull(itemDtoRequest.getAvailable())) {
-            itemForUpdate.setAvailable(itemDtoRequest.getAvailable());
+        if (Objects.nonNull(itemDto.getAvailable())) {
+            itemForUpdate.setAvailable(itemDto.getAvailable());
         }
         itemRepository.save(itemForUpdate);
         return itemForUpdate;
     }
 
     @Override
-    public List<ItemDtoResponse> getAll(Long userId) throws NotFoundException {
-
+    public List<ItemDto> getAll(Long userId) throws NotFoundException {
+        Optional<User> optionalUser = userRepository.findById(userId);
         if (userId == 0) {
             return getAllItems();
         } else {
-            if (userService.getById(userId) == null) {
+            if (optionalUser.isEmpty()) {
                 throw new NotFoundException("Пользователь не найден");
             }
         }
         return getItemByUser(userId);
     }
 
-    private List<ItemDtoResponse> getItemByUser(Long userId) throws NotFoundException {
-        User user = userService.getById(userId);
+    private List<ItemDto> getItemByUser(Long userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        User user = optionalUser.get();
         return itemRepository.findAll()
                 .stream()
-                .filter(item -> item.getOwner() == user)
-                .map(ItemMapper::itemDtoResponse)
+                .filter(item -> item.getOwner().equals(user))
+                .map(ItemMapper::itemDto)
+                .sorted(Comparator.comparing(ItemDto::getId))
+                .map(this::setLastAndNextBookingForItem)
                 .collect(Collectors.toList());
     }
 
-    private List<ItemDtoResponse> getAllItems() {
+    private List<ItemDto> getAllItems() {
         return itemRepository.findAll()
                 .stream()
-                .map(ItemMapper::itemDtoResponse)
+                .map(ItemMapper::itemDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public ItemDtoResponse getItemComment(Long itemId, Long userId) throws NotFoundException {
+    public ItemDto getById(Long itemId, Long userId) throws NotFoundException {
         Optional<Item> optionalItem = itemRepository.findById(itemId);
         if (optionalItem.isEmpty()) {
             throw new NotFoundException("Предмет не найден");
         }
-        ItemDtoResponse item = ItemMapper.itemDtoResponse(optionalItem.get());
-        item.setComments(commentRepository.findCommentsByItemOrderByCreatedDesc(optionalItem.get())
+        ItemDto itemDto = ItemMapper.itemDto(optionalItem.get());
+        itemDto.setComments(commentRepository.findCommentsByItemOrderByCreatedDesc(optionalItem.get())
                 .stream()
                 .map(CommentMapper::toCommentDto)
                 .collect(Collectors.toList()));
         if (userId.equals(optionalItem.get().getOwner().getId())) {
-            return setLastAndNextBookingForItem(item);
+            return setLastAndNextBookingForItem(itemDto);
         } else {
-            return item;
+            return itemDto;
         }
-
     }
 
     @Override
     public Item getItem(Long itemId) throws NotFoundException {
-        if (Objects.isNull(itemId) || itemId <= 0) {
-            throw new NotFoundException("некорректный ID");
-        }
         Optional<Item> optionalItem = itemRepository.findById(itemId);
         if (optionalItem.isEmpty()) {
-            throw new NotFoundException("Предмет не найден");
+            throw new NotFoundException("некорректный ID");
         }
         return optionalItem.get();
     }
-
-    //todo метод с комметнтариями
 
     @Override
     public List<Item> search(String text) {
@@ -147,11 +156,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public CommentDto creatComment(Long userId, Long itemId, CommentDto commentDto) throws NotFoundException {
+    public CommentDto creatComment(Long userId, Long itemId, CommentDto commentDto) throws ValidationException, NotFoundException {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        User user = optionalUser.get();
         List<Booking> bookings = bookingRepository
                 .findBookingsByBookerAndItemAndStatusNot(userId, itemId, Status.REJECTED);
         if (bookings.isEmpty()) {
-            throw new IllegalStateException("У предмета не было бронирований");
+            throw new ValidationException("У предмета не было бронирований");
         }
         boolean future = true;
         for (Booking booking : bookings) {
@@ -161,15 +172,17 @@ public class ItemServiceImpl implements ItemService {
             }
         }
         if (future) {
-            throw new IllegalStateException("Комментарий не может быть оставлен к будущему бронированию");
+            throw new ValidationException("Комментарий не может быть оставлен к будущему бронированию");
         }
         Comment comment = CommentMapper.toComment(commentDto);
         comment.setItem(getItem(itemId));
-        comment.setAuthor(userService.getById(userId));
+        comment.setAuthor(user);
         comment.setCreated(LocalDateTime.now());
-        return null;
+        commentRepository.save(comment);
+        return CommentMapper.toCommentDto(comment);
     }
-    private ItemDtoResponse setLastAndNextBookingForItem(ItemDtoResponse itemDto) {
+
+    private ItemDto setLastAndNextBookingForItem(ItemDto itemDto) {
         Booking lastBooking = null;
         Booking nextBooking = null;
         List<Booking> bookings = bookingRepository.findBookingsByItemAsc(itemDto.getId());
@@ -193,7 +206,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
 
-    private void validate(ItemDtoRequest itemDtoRequest) throws ValidationException {
+    private void validate(ItemDto itemDtoRequest) throws ValidationException {
         if (Objects.isNull(itemDtoRequest.getAvailable())) {
             throw new ValidationException("Ошибка в доступности Item");
         }
@@ -208,7 +221,4 @@ public class ItemServiceImpl implements ItemService {
             throw new ValidationException("не допустимое описание Item");
         }
     }
-
-
-
 }
