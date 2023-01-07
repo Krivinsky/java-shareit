@@ -1,8 +1,10 @@
 package ru.practicum.shareit.item;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.comment.CommentDto;
+import ru.practicum.shareit.exeption.ErrorResponse;
 import ru.practicum.shareit.exeption.NotFoundException;
 import ru.practicum.shareit.exeption.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -75,5 +77,17 @@ public class ItemController {
         CommentDto commentDto1 = itemService.creatComment(userId, itemId, commentDto);
         System.out.println(commentDto1);
         return commentDto1;
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleNotFoundException(NotFoundException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleIncorrectParameterException(ValidationException e) {
+        return new ErrorResponse(e.getMessage());
     }
 }

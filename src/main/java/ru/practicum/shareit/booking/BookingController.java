@@ -30,7 +30,7 @@ public class BookingController {
     public BookingDtoResponse creatBooking(@RequestHeader ("X-Sharer-User-Id") Long userId,
                                            @Valid  @RequestBody BookingDto bookingDto) throws NotFoundException, ItemException {
         BookingDtoResponse bookingDtoResponse = bookingService.creatBooking(bookingDto, userId);
-        log.info("");
+        log.info("Создано бронирование пользователя - " + userId);
         return bookingDtoResponse;
     }
 
@@ -38,7 +38,7 @@ public class BookingController {
     public BookingDtoResponse updateBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
                                             @PathVariable Long bookingId,
                                             @RequestParam("approved") Boolean approved) throws ItemException, NotFoundException {
-        log.info("");
+        log.info("Обновлено бронирование пользователя - " + userId);
         return bookingService.updateBooking(bookingId, userId, approved);
     }
 
@@ -47,7 +47,7 @@ public class BookingController {
     public BookingDtoResponse getBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
                                           @PathVariable Long bookingId) throws NotFoundException {
         BookingDtoResponse bookingDtoResponse = bookingService.getBooking(bookingId, userId);
-        log.info("");
+        log.info("Получено бронирование " + bookingId + " пользователем - " + userId);
         return  bookingDtoResponse;
     }
 
@@ -55,14 +55,14 @@ public class BookingController {
     public List<BookingDtoResponse> getAll(@RequestHeader ("X-Sharer-User-Id") Long userId,
                                            @RequestParam (value = "state", required = false, defaultValue =  "ALL") String state) throws UnsupportedState {
         List<BookingDtoResponse> bookingDtoResponse = bookingService.getAll(userId, state);
-        log.info("");
+        log.info("получен список из - " + bookingDtoResponse.size() + "бронирований");
         return bookingDtoResponse;
     }
 
     @GetMapping("/owner")
     public List<BookingDtoResponse> getOwnerItemsAll(@RequestHeader ("X-Sharer-User-Id") Long userId,
                                                      @RequestParam (value = "state", required = false, defaultValue =  "ALL") String state) throws UnsupportedState, NotFoundException {
-        log.info("");
+        log.info("Получен список бронирований");
         return bookingService.getOwnerItemsAll(userId, state);
     }
 

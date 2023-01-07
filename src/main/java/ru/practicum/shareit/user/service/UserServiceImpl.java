@@ -1,12 +1,16 @@
 package ru.practicum.shareit.user.service;
 
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exeption.ConflictException;
 import ru.practicum.shareit.exeption.NotFoundException;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -18,7 +22,11 @@ public class UserServiceImpl implements UserService {
     }
 
     public User create(User user) {
-        return userRepository.save(user);
+        try {
+            return userRepository.save(user);
+        } catch (RuntimeException ex) {
+            throw new ConflictException("Такой пользователь уже существует");
+        }
     }
 
     @Override
@@ -35,7 +43,11 @@ public class UserServiceImpl implements UserService {
         if (Objects.nonNull(userDto.getEmail())) {
             userForUpdate.setEmail(userDto.getEmail());
         }
-        return userRepository.save(userForUpdate);
+        try {
+            return userRepository.save(userForUpdate);
+        } catch (RuntimeException ex) {
+            throw new ConflictException("Такой пользователь уже существует");
+        }
     }
 
     @Override
