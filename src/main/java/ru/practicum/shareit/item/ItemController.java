@@ -27,7 +27,7 @@ public class ItemController {
     }
 
     @PostMapping
-    public ItemDto creatItem(@RequestHeader ("X-Sharer-User-Id") long userId,
+    public ItemDto creatItem(@RequestHeader ("X-Sharer-User-Id") Long userId,
                              @RequestBody ItemDto itemDto) throws NotFoundException, ValidationException {
         Item item = itemService.creatItem(itemDto, userId);
         log.info("создан Item - " + item.getName());
@@ -36,8 +36,8 @@ public class ItemController {
 
     @PatchMapping("/{itemId}")
     public ItemDto updateItem(@RequestHeader ("X-Sharer-User-Id") long userId,
-                                      @RequestBody ItemDto itemDto,
-                                      @PathVariable Long itemId) throws NotFoundException {
+                              @RequestBody ItemDto itemDto,
+                              @PathVariable Long itemId) throws NotFoundException {
         Item item = itemService.updateItem(itemDto, userId, itemId);
         log.info("обновлен Item - " + item.getName());
         return ItemMapper.itemDto(item);
