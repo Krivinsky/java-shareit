@@ -32,4 +32,6 @@ public class ItemDto {
     private BookingDto nextBooking;
 
     private List<CommentDto> comments;
+
+    private Long requestId; //todo
 }

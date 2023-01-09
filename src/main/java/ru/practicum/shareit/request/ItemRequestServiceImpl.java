@@ -11,6 +11,8 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -31,12 +33,16 @@ public class ItemRequestServiceImpl implements ItemRequestService{
     public ItemRequest create(long userId, ItemRequestDto itemRequestDto) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
-            throw new NotFoundException("не найден пользователь с id " + userId);
+            throw new NotFoundException("Не найден пользователь с id " + userId);
         }
         if (Objects.isNull(itemRequestDto.getDescription())) {
             throw new ValidationException("Описание запроса не может быть пустым");
         }
-        ItemRequest itemRequest = new ItemRequest();
+
+        ItemRequest itemRequest = ItemRequestMapper.toItemRequest(itemRequestDto);
+        itemRequest.setRequestor(user.get());
+        itemRequest.setCreated(LocalDateTime.now());
+
         System.out.println(itemRequest);
         itemRequestRepository.save(itemRequest);
         return itemRequest;
@@ -44,6 +50,7 @@ public class ItemRequestServiceImpl implements ItemRequestService{
 
     @Override
     public List<ItemRequest> get(long userId) {
+
         return null;
     }
 

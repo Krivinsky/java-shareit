@@ -46,7 +46,7 @@ public class ItemServiceImpl implements ItemService {
         validate(itemDto);
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isEmpty()) {
-            throw new NotFoundException("такого пользователя нет");
+            throw new NotFoundException("Не найден пользователь с id " + userId);
         }
         User user = optionalUser.get();
         Item item = ItemMapper.toItem(itemDto);
