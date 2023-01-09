@@ -1,33 +1,22 @@
 package ru.practicum.shareit.user;
 
-import ru.practicum.shareit.user.dto.UserDtoRequest;
-import ru.practicum.shareit.user.dto.UserDtoResponse;
-
-import java.util.Objects;
+import ru.practicum.shareit.user.dto.UserDto;
 
 public class UserMapper {
 
-   public static User toUserFromRequest(UserDtoRequest userDtoRequest, Long id) {
-        if (Objects.isNull(id)) {
-            return new User(
-                    UserRepositoryImpl.generateId(),
-                    userDtoRequest.getName(),
-                    userDtoRequest.getEmail()
-            );
-        } else {
-            return new User(
-                    id,
-                    userDtoRequest.getName(),
-                    userDtoRequest.getEmail()
-            );
-        }
-    }
+   public static User toUser(UserDto userDto) {
+       return User.builder()
+               .id(userDto.getId())
+               .name(userDto.getName())
+               .email(userDto.getEmail())
+               .build();
+   }
 
-    public static UserDtoResponse toUserDtoResponse(User user) {
-        return new UserDtoResponse(
-                user.getId(),
-                user.getName(),
-                user.getEmail()
-        );
+    public static UserDto toUserDto(User user) {
+        return UserDto.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .build();
     }
 }
