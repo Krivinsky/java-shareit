@@ -1,6 +1,12 @@
 package ru.practicum.shareit.request;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import ru.practicum.shareit.user.User;
 
-public interface ItemRequestRepository extends JpaRepository<ItemRequest, Long> {
+import java.time.chrono.Chronology;
+import java.util.List;
+
+public interface ItemRequestRepository extends PagingAndSortingRepository<ItemRequest, Long> {
+
+    List<ItemRequest> findAllByRequestor(User requestor);
 }

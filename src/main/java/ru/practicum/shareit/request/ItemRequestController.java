@@ -7,6 +7,7 @@ import ru.practicum.shareit.exeption.ErrorResponse;
 import ru.practicum.shareit.exeption.NotFoundException;
 import ru.practicum.shareit.exeption.ValidationException;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.request.dto.ItemRequestDtoResp;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -29,19 +30,21 @@ public class ItemRequestController {
     public ItemRequest create(@RequestHeader("X-Sharer-User-Id") Long userId,
                               @RequestBody ItemRequestDto itemRequestDto) {
         ItemRequest itemRequest = itemRequestService.create(userId, itemRequestDto);
-        System.out.println(itemRequest);
+        log.info("Создан запрос на " + itemRequest.getDescription());
         return itemRequest;
     }
 
     @GetMapping
-    public List<ItemRequest> get(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        return itemRequestService.get(userId);
+    public List<ItemRequestDtoResp> get(@RequestHeader("X-Sharer-User-Id") Long userId) {
+        List<ItemRequestDtoResp> itemRequestDtoResps = itemRequestService.get(userId);
+        log.info("Получены запросы от пользователя " + userId );
+        return itemRequestDtoResps;
     }
 
     @GetMapping("/all")
     public List<ItemRequest> getAll(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                       @RequestParam (value = "from", required = false) Long from,
-                                       @RequestParam (value = "size", required = false) Long size ) {
+                                       @RequestParam (value = "from", required = false, defaultValue = "0") Long from,
+                                       @RequestParam (value = "size", required = false, defaultValue = "1") Long size) {
         return itemRequestService.getAll(from, size);
     }
 

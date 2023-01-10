@@ -33,5 +33,5 @@ public class ItemDto {
 
     private List<CommentDto> comments;
 
-    private Long requestId; //todo
+    private Long requestId;
 }
