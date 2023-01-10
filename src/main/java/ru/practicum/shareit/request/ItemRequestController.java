@@ -12,9 +12,6 @@ import ru.practicum.shareit.request.dto.ItemRequestDtoResp;
 import javax.validation.Valid;
 import java.util.List;
 
-/**
- * TODO Sprint add-item-requests.
- */
 @RestController
 @RequestMapping(path = "/requests")
 @Slf4j
@@ -35,8 +32,8 @@ public class ItemRequestController {
     }
 
     @GetMapping
-    public List<ItemRequestDtoResp> get(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        List<ItemRequestDtoResp> itemRequestDtoResps = itemRequestService.get(userId);
+    public List<ItemRequestDtoResp> getByUser(@RequestHeader("X-Sharer-User-Id") Long userId) {
+        List<ItemRequestDtoResp> itemRequestDtoResps = itemRequestService.getByUser(userId);
         log.info("Получены запросы от пользователя " + userId );
         return itemRequestDtoResps;
     }
@@ -51,7 +48,7 @@ public class ItemRequestController {
     @GetMapping("/{requestId}")
     public ItemRequest getItemRequestById(@RequestHeader("X-Sharer-User-Id") Long userId,
                                              @PathVariable Long requestId) {
-        return itemRequestService.getItemRequestById(requestId);
+        return itemRequestService.getItemRequestById(requestId, userId);
     }
 
     @ExceptionHandler

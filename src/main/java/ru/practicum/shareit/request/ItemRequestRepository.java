@@ -8,5 +8,7 @@ import java.util.List;
 
 public interface ItemRequestRepository extends PagingAndSortingRepository<ItemRequest, Long> {
 
-    List<ItemRequest> findAllByRequestor(User requestor);
+    List<ItemRequest> findAllByRequestorIdOrderByCreatedAsc(Long userId);
+
+
 }

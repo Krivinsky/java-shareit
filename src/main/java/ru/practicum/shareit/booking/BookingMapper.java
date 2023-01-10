@@ -32,7 +32,7 @@ public class BookingMapper {
                 booking.getEnd(),
                 booking.getStatus(),
                 UserMapper.toUserDto(booking.getBooker()),
-                ItemMapper.itemDto(booking.getItem())
+                ItemMapper.toItemDto(booking.getItem())
         );
     }
 }

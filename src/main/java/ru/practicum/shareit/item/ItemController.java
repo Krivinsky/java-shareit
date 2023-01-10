@@ -31,7 +31,7 @@ public class ItemController {
                              @RequestBody ItemDto itemDto) throws NotFoundException, ValidationException {
         Item item = itemService.creatItem(itemDto, userId);
         log.info("создан Item - " + item.getName());
-        return ItemMapper.itemDto(item);
+        return ItemMapper.toItemDto(item);
     }
 
     @PatchMapping("/{itemId}")
@@ -40,7 +40,7 @@ public class ItemController {
                               @PathVariable Long itemId) throws NotFoundException {
         Item item = itemService.updateItem(itemDto, userId, itemId);
         log.info("обновлен Item - " + item.getName());
-        return ItemMapper.itemDto(item);
+        return ItemMapper.toItemDto(item);
     }
 
     @GetMapping
@@ -64,7 +64,7 @@ public class ItemController {
         List<Item> items = itemService.search(text);
         List<ItemDto> list = new ArrayList<>();
         for (Item i : items) {
-            list.add(ItemMapper.itemDto(i));
+            list.add(ItemMapper.toItemDto(i));
         }
         log.info("получен список из " + list.size() + " вещей");
         return list;

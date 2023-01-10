@@ -2,20 +2,16 @@ package ru.practicum.shareit.request;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import ru.practicum.shareit.exeption.ErrorResponse;
 import ru.practicum.shareit.exeption.NotFoundException;
 import ru.practicum.shareit.exeption.ValidationException;
+import ru.practicum.shareit.item.mapper.ItemMapper;
+import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoResp;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -30,11 +26,14 @@ public class ItemRequestServiceImpl implements ItemRequestService{
 
     private final UserRepository userRepository;
 
+    private final ItemRepository itemRepository;
+
     //private final Sort sort = Sort.by(Sort.Direction.DESC, "created");
 
-    public ItemRequestServiceImpl(ItemRequestRepository itemRequestRepository, UserRepository userRepository) {
+    public ItemRequestServiceImpl(ItemRequestRepository itemRequestRepository, UserRepository userRepository, ItemRepository itemRepository) {
         this.itemRequestRepository = itemRequestRepository;
         this.userRepository = userRepository;
+        this.itemRepository = itemRepository;
     }
 
     @Override
@@ -57,19 +56,21 @@ public class ItemRequestServiceImpl implements ItemRequestService{
     }
 
     @Override
-    public List<ItemRequestDtoResp> get(long userId) {
+    public List<ItemRequestDtoResp> getByUser(long userId) {
 
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
             throw new NotFoundException("Не найден пользователь с id " + userId);
         }
-        List<ItemRequest> itemRequests = itemRequestRepository.findAllByRequestor(user.get());
+
+        List<ItemRequest> itemRequests =
+                itemRequestRepository.findAllByRequestorIdOrderByCreatedAsc(userId);
+
         List<ItemRequestDtoResp> itemRequestDtoResps = itemRequests
                 .stream()
                 .map(ItemRequestMapper::toItemRequestDtoResp)
-                .sorted(Comparator.comparing(ItemRequestDtoResp::getCreated))
                 .collect(Collectors.toList());
-
+        itemRequestDtoResps.forEach(this::setItems);
         return itemRequestDtoResps;
     }
 
@@ -81,11 +82,21 @@ public class ItemRequestServiceImpl implements ItemRequestService{
     }
 
     @Override
-    public ItemRequest getItemRequestById(Long requestId) {
+    public ItemRequest getItemRequestById(Long requestId, Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            throw new NotFoundException("Не найден пользователь с id " + userId);
+        }
         ItemRequest itemRequest = itemRequestRepository.findById(requestId).orElseThrow(() ->
                 new NotFoundException("Не найден запрос с id " + requestId));
         return itemRequest;
     }
 
+    private void setItems(ItemRequestDtoResp itemRequestDtoResp) {
+        itemRequestDtoResp.setItems(itemRepository.findAllByRequestId(itemRequestDtoResp.getId())
+                .stream()
+                .map(ItemMapper::toItemDto)
+                .collect(Collectors.toList()));
+    }
 
 }

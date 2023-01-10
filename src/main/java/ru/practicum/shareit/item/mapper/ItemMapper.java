@@ -17,7 +17,7 @@ public class ItemMapper {
                 .build();
     }
 
-    public static ItemDto itemDto(Item item) {
+    public static ItemDto toItemDto(Item item) {
         return ItemDto.builder()
                 .id(item.getId())
                 .name(item.getName())
@@ -25,7 +25,7 @@ public class ItemMapper {
                 .available(item.getAvailable())
                 .request(item.getRequest() != null ? item.getRequest() : null)
                 .comments(new ArrayList<>())
-                .requestId(item.getRequest().getId())
+                .requestId(item.getRequest()!= null ? item.getRequest().getId() : null)
                 .build();
     }
 }

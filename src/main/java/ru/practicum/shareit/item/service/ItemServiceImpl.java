@@ -15,6 +15,8 @@ import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
@@ -33,11 +35,14 @@ public class ItemServiceImpl implements ItemService {
 
     private final CommentRepository commentRepository;
 
-    public ItemServiceImpl(UserRepository userRepository, BookingRepository bookingRepository, CommentRepository commentRepository, ItemRepository itemRepository) {
+    private final ItemRequestRepository itemRequestRepository;
+
+    public ItemServiceImpl(UserRepository userRepository, BookingRepository bookingRepository, CommentRepository commentRepository, ItemRepository itemRepository, ItemRequestRepository itemRequestRepository) {
         this.userRepository = userRepository;
         this.bookingRepository = bookingRepository;
         this.commentRepository = commentRepository;
         this.itemRepository = itemRepository;
+        this.itemRequestRepository = itemRequestRepository;
     }
 
 
@@ -50,6 +55,10 @@ public class ItemServiceImpl implements ItemService {
         }
         User user = optionalUser.get();
         Item item = ItemMapper.toItem(itemDto);
+        if (Objects.nonNull(itemDto.getRequestId())) {
+            Optional<ItemRequest> optionalItemRequest = itemRequestRepository.findById(itemDto.getRequestId());
+            optionalItemRequest.ifPresent(item::setRequest);
+        }
         item.setOwner(user);
         itemRepository.save(item);
         return item;
@@ -99,7 +108,7 @@ public class ItemServiceImpl implements ItemService {
         return itemRepository.findAll()
                 .stream()
                 .filter(item -> item.getOwner().equals(user))
-                .map(ItemMapper::itemDto)
+                .map(ItemMapper::toItemDto)
                 .sorted(Comparator.comparing(ItemDto::getId))
                 .map(this::setLastAndNextBookingForItem)
                 .collect(Collectors.toList());
@@ -108,7 +117,7 @@ public class ItemServiceImpl implements ItemService {
     private List<ItemDto> getAllItems() {
         return itemRepository.findAll()
                 .stream()
-                .map(ItemMapper::itemDto)
+                .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
 
@@ -118,7 +127,7 @@ public class ItemServiceImpl implements ItemService {
         if (optionalItem.isEmpty()) {
             throw new NotFoundException("Предмет не найден");
         }
-        ItemDto itemDto = ItemMapper.itemDto(optionalItem.get());
+        ItemDto itemDto = ItemMapper.toItemDto(optionalItem.get());
         itemDto.setComments(commentRepository.findCommentsByItemOrderByCreatedDesc(optionalItem.get())
                 .stream()
                 .map(CommentMapper::toCommentDto)
