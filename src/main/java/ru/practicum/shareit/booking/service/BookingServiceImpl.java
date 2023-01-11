@@ -102,13 +102,13 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDtoResponse> getAll(Long userId, String state) throws UnsupportedState {
+    public List<BookingDtoResponse> getAll(Long userId, String state, Long from, Long size) throws UnsupportedState {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new ValidationException("не найден пользователь с id " + userId));
         List<Booking> bookingDtoList = new ArrayList<>();
         switch (state) {
             case "ALL":
-                bookingDtoList.addAll(bookingRepository.findAllByBooker(user,sort));
+                bookingDtoList.addAll(bookingRepository.findAllByBooker(user, sort));
                 break;
             case "CURRENT":
                 bookingDtoList.addAll(bookingRepository.findAllByBookerAndStartBeforeAndEndAfter(user,

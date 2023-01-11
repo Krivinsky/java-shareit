@@ -53,9 +53,11 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDtoResponse> getAll(@RequestHeader ("X-Sharer-User-Id") Long userId,
-                                           @RequestParam (value = "state", required = false, defaultValue =  "ALL") String state) throws UnsupportedState {
-        List<BookingDtoResponse> bookingDtoResponse = bookingService.getAll(userId, state);
-        log.info("получен список из - " + bookingDtoResponse.size() + "бронирований");
+                                           @RequestParam (value = "state", required = false, defaultValue =  "ALL") String state,
+                                           @RequestParam (value = "from", required = false) Long from,
+                                           @RequestParam (value = "size", required = false) Long size) throws UnsupportedState {
+        List<BookingDtoResponse> bookingDtoResponse = bookingService.getAll(userId, state, from, size);
+        log.info("получен список из - " + bookingDtoResponse.size() + " бронирований");
         return bookingDtoResponse;
     }
 

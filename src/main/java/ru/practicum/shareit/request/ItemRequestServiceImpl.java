@@ -28,8 +28,6 @@ public class ItemRequestServiceImpl implements ItemRequestService{
 
     private final ItemRepository itemRepository;
 
-    //private final Sort sort = Sort.by(Sort.Direction.DESC, "created");
-
     public ItemRequestServiceImpl(ItemRequestRepository itemRequestRepository, UserRepository userRepository, ItemRepository itemRepository) {
         this.itemRequestRepository = itemRequestRepository;
         this.userRepository = userRepository;
@@ -75,21 +73,33 @@ public class ItemRequestServiceImpl implements ItemRequestService{
     }
 
     @Override
-    public List<ItemRequest> getAll(Long from, Long size) {
-
-        Page<ItemRequest> requestPAge = itemRequestRepository.findAll(PageRequest.of(from.intValue(), size.intValue()));
-        return requestPAge.toList();
-    }
-
-    @Override
-    public ItemRequest getItemRequestById(Long requestId, Long userId) {
+    public List<ItemRequestDtoResp> getAll(Long from, Long size, Long userId) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
             throw new NotFoundException("Не найден пользователь с id " + userId);
         }
-        ItemRequest itemRequest = itemRequestRepository.findById(requestId).orElseThrow(() ->
-                new NotFoundException("Не найден запрос с id " + requestId));
-        return itemRequest;
+        List<ItemRequestDtoResp> requestPage = itemRequestRepository.
+                findAllByRequestorNotLikeOrderByCreatedAsc(user.get(), PageRequest.of(from.intValue(), size.intValue()))
+                .stream()
+                .map(ItemRequestMapper::toItemRequestDtoResp)
+                .collect(Collectors.toList());
+        requestPage.forEach(this::setItems);
+        return requestPage;
+    }
+
+    @Override
+    public ItemRequestDtoResp getItemRequestById(Long requestId, Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            throw new NotFoundException("Не найден пользователь с id " + userId);
+        }
+        Optional<ItemRequest> itemRequest = itemRequestRepository.findById(requestId);
+        if (itemRequest.isEmpty()) {
+            throw new NotFoundException("Не найден запрос с id " + requestId);
+        }
+        ItemRequestDtoResp itemRequestDtoResp = ItemRequestMapper.toItemRequestDtoResp(itemRequest.get());
+        setItems(itemRequestDtoResp);
+        return itemRequestDtoResp;
     }
 
     private void setItems(ItemRequestDtoResp itemRequestDtoResp) {
@@ -98,5 +108,4 @@ public class ItemRequestServiceImpl implements ItemRequestService{
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList()));
     }
-
 }

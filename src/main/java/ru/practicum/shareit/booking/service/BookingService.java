@@ -16,7 +16,7 @@ public interface BookingService {
 
     BookingDtoResponse getBooking(Long bookingId, Long userId) throws NotFoundException;
 
-    List<BookingDtoResponse> getAll(Long userId, String state) throws UnsupportedState;
+    List<BookingDtoResponse> getAll(Long userId, String state, Long from, Long size) throws UnsupportedState;
 
     List<BookingDtoResponse> getOwnerItemsAll(Long userId, String state) throws NotFoundException, UnsupportedState;
 }

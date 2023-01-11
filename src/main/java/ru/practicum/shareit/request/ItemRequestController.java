@@ -39,16 +39,20 @@ public class ItemRequestController {
     }
 
     @GetMapping("/all")
-    public List<ItemRequest> getAll(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public List<ItemRequestDtoResp> getAll(@RequestHeader("X-Sharer-User-Id") Long userId,
                                        @RequestParam (value = "from", required = false, defaultValue = "0") Long from,
                                        @RequestParam (value = "size", required = false, defaultValue = "1") Long size) {
-        return itemRequestService.getAll(from, size);
+        List<ItemRequestDtoResp> itemRequests = itemRequestService.getAll(from, size, userId);
+        log.info("Получены запросы других пользователей в количестве - "+ itemRequests.size());
+        return itemRequests;
     }
 
     @GetMapping("/{requestId}")
-    public ItemRequest getItemRequestById(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ItemRequestDtoResp getItemRequestById(@RequestHeader("X-Sharer-User-Id") Long userId,
                                              @PathVariable Long requestId) {
-        return itemRequestService.getItemRequestById(requestId, userId);
+        ItemRequestDtoResp itemRequestDtoResp = itemRequestService.getItemRequestById(requestId, userId);
+        log.info("Получен запрос с Id - " + requestId);
+        return itemRequestDtoResp;
     }
 
     @ExceptionHandler
