@@ -66,7 +66,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item updateItem(ItemDto itemDto, Long userId, Long itemId) throws NotFoundException {
-
         Optional<Item> itemOptional = itemRepository.findById(itemId);
         if (itemOptional.isEmpty()) {
             throw new NotFoundException("Вещь не найдена");
@@ -99,19 +98,18 @@ public class ItemServiceImpl implements ItemService {
                 throw new NotFoundException("Пользователь не найден");
             }
         }
-        return getItemByUser(userId);
+        return getItemsByUser(userId);
     }
 
-    private List<ItemDto> getItemByUser(Long userId) {
+    private List<ItemDto> getItemsByUser(Long userId) {
         Optional<User> optionalUser = userRepository.findById(userId);
         User user = optionalUser.get();
-        return itemRepository.findAll()
+        return itemRepository.findAllByOwnerOrderById(user)
                 .stream()
-                .filter(item -> item.getOwner().equals(user))
                 .map(ItemMapper::toItemDto)
-                .sorted(Comparator.comparing(ItemDto::getId))
                 .map(this::setLastAndNextBookingForItem)
                 .collect(Collectors.toList());
+
     }
 
     private List<ItemDto> getAllItems() {
