@@ -9,7 +9,6 @@ import ru.practicum.shareit.exeption.ValidationException;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoResp;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
