@@ -44,7 +44,7 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> getAll(@RequestHeader ("X-Sharer-User-Id") long userId) throws NotFoundException {
+    public List<ItemDto> getAll(@RequestHeader ("X-Sharer-User-Id") Long userId) throws NotFoundException {
         List<ItemDto> list = itemService.getAll(userId);
         log.info("получен список из " + list.size() + " вещей");
         return list;
