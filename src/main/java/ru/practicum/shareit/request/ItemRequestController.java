@@ -2,6 +2,7 @@ package ru.practicum.shareit.request;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exeption.ErrorResponse;
 import ru.practicum.shareit.exeption.NotFoundException;
@@ -9,11 +10,13 @@ import ru.practicum.shareit.exeption.ValidationException;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDtoResp;
 
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "/requests")
 @Slf4j
+@Validated
 public class ItemRequestController {
 
     private final ItemRequestService itemRequestService;
@@ -39,8 +42,8 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     public List<ItemRequestDtoResp> getAll(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                       @RequestParam (value = "from", required = false, defaultValue = "0") Long from,
-                                       @RequestParam (value = "size", required = false, defaultValue = "1") Long size) {
+                                           @Min(0) @RequestParam (value = "from", required = false, defaultValue = "0") Long from,
+                                           @Min (1) @RequestParam (value = "size", required = false, defaultValue = "1") Long size) {
         List<ItemRequestDtoResp> itemRequests = itemRequestService.getAll(from, size, userId);
         log.info("Получены запросы других пользователей в количестве - "+ itemRequests.size());
         return itemRequests;
