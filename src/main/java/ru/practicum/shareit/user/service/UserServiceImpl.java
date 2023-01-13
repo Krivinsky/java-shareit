@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exeption.ConflictException;
 import ru.practicum.shareit.exeption.NotFoundException;
 import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -21,9 +23,10 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
     }
 
-    public User create(User user) {
+    public UserDto create(UserDto userDto) {
+        User user = UserMapper.toUser(userDto);
         try {
-            return userRepository.save(user);
+            return UserMapper.toUserDto(userRepository.save(user));
         } catch (RuntimeException ex) {
             throw new ConflictException("Такой пользователь уже существует");
         }
@@ -51,12 +54,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getById(Long userId) throws NotFoundException {
+    public UserDto getById(Long userId) throws NotFoundException {
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isEmpty()) {
             throw new NotFoundException("Пользователь не найден");
         }
-        return userOptional.get();
+        return UserMapper.toUserDto(userOptional.get());
     }
 
     @Override
@@ -68,8 +71,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getAll() {
-        return new ArrayList<>(userRepository.findAll());
+    public List<UserDto> getAll() {
+        return userRepository.findAll()
+                .stream()
+                .map(UserMapper::toUserDto)
+                .collect(Collectors.toList());
     }
-
 }

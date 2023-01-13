@@ -26,10 +26,8 @@ public class UserController {
 
     @PostMapping
     public UserDto create(@Valid @RequestBody UserDto userDto) {
-        User user = UserMapper.toUser(userDto);
-        userService.create(user);
-        log.info("создан пользователь с ID - " + user.getId());
-        return UserMapper.toUserDto(user);
+        log.info("создан пользователь с ID - " + userDto.getId());
+        return userService.create(userDto);
     }
 
     @PatchMapping("/{userId}")
@@ -41,21 +39,15 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public UserDto getUser(@PathVariable Long userId) throws NotFoundException {
-        User user = userService.getById(userId);
-        log.info("получен пользователь с ID - " + user.getId());
-        return UserMapper.toUserDto(user);
+        UserDto userDto = userService.getById(userId);
+        log.info("получен пользователь с ID - " + userDto.getId());
+        return userDto;
     }
 
     @GetMapping
     public List<UserDto> getAllUsers() {
-        List<UserDto> usersResp = new ArrayList<>();
-        List<User> users = userService.getAll();
-        for (User user : users) {
-            usersResp.add(UserMapper.toUserDto(user));
-        }
-
-        log.info("получен список из "  + usersResp.size() + " пользователей ");
-        return usersResp;
+        log.info("получен список пользователей ");
+        return userService.getAll();
     }
 
     @DeleteMapping("/{userId}")
