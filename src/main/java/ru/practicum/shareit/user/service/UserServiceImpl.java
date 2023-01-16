@@ -8,7 +8,6 @@ import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -23,7 +22,7 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
     }
 
-    public UserDto create(UserDto userDto) {
+    public UserDto createUser(UserDto userDto) {
         User user = UserMapper.toUser(userDto);
         try {
             return UserMapper.toUserDto(userRepository.save(user));
@@ -33,7 +32,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User update(Long userId, UserDto userDto) throws NotFoundException {
+    public UserDto updateUser(Long userId, UserDto userDto) throws NotFoundException {
 
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isEmpty()) {
@@ -47,7 +46,7 @@ public class UserServiceImpl implements UserService {
             userForUpdate.setEmail(userDto.getEmail());
         }
         try {
-            return userRepository.save(userForUpdate);
+            return UserMapper.toUserDto(userRepository.save(userForUpdate));
         } catch (RuntimeException ex) {
             throw new ConflictException("Такой пользователь уже существует");
         }

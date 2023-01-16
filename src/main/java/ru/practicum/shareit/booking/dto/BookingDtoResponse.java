@@ -1,16 +1,16 @@
 package ru.practicum.shareit.booking.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 import ru.practicum.shareit.booking.Status;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.item.Item;
+import ru.practicum.shareit.user.User;
 
 import javax.validation.constraints.Future;
 import java.time.LocalDateTime;
 
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
+@Builder
 public class BookingDtoResponse {
     private Long id;
 
@@ -22,8 +22,9 @@ public class BookingDtoResponse {
 
     private Status status;
 
-    private UserDto booker;
+    private User booker;
 
-    private ItemDto item;
+    private Item item;
 
 }
+

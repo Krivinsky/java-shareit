@@ -47,7 +47,7 @@ public class ItemServiceImpl implements ItemService {
 
 
     @Override
-    public Item creatItem(ItemDto itemDto, Long userId) throws ValidationException, NotFoundException {
+    public ItemDto creatItem(ItemDto itemDto, Long userId) throws ValidationException, NotFoundException {
         validate(itemDto);
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isEmpty()) {
@@ -61,11 +61,11 @@ public class ItemServiceImpl implements ItemService {
         }
         item.setOwner(user);
         itemRepository.save(item);
-        return item;
+        return ItemMapper.toItemDto(item);
     }
 
     @Override
-    public Item updateItem(ItemDto itemDto, Long userId, Long itemId) throws NotFoundException {
+    public ItemDto updateItem(ItemDto itemDto, Long userId, Long itemId) throws NotFoundException {
         Optional<Item> itemOptional = itemRepository.findById(itemId);
         if (itemOptional.isEmpty()) {
             throw new NotFoundException("Вещь не найдена");
@@ -85,14 +85,14 @@ public class ItemServiceImpl implements ItemService {
             itemForUpdate.setAvailable(itemDto.getAvailable());
         }
         itemRepository.save(itemForUpdate);
-        return itemForUpdate;
+        return ItemMapper.toItemDto(itemForUpdate);
     }
 
     @Override
     public List<ItemDto> getAll(Long userId) throws NotFoundException {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (userId == 0) {
-            return getAllItems();
+            return itemRepository.findAll().stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
         } else {
             if (optionalUser.isEmpty()) {
                 throw new NotFoundException("Пользователь не найден");
@@ -108,14 +108,6 @@ public class ItemServiceImpl implements ItemService {
                 .stream()
                 .map(ItemMapper::toItemDto)
                 .map(this::setLastAndNextBookingForItem)
-                .collect(Collectors.toList());
-
-    }
-
-    private List<ItemDto> getAllItems() {
-        return itemRepository.findAll()
-                .stream()
-                .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
 
@@ -138,18 +130,8 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item getItem(Long itemId) throws NotFoundException {
-        Optional<Item> optionalItem = itemRepository.findById(itemId);
-        if (optionalItem.isEmpty()) {
-            throw new NotFoundException("некорректный ID");
-        }
-        return optionalItem.get();
-    }
-
-    @Override
-    public List<Item> search(String text) {
-
-        List<Item> itemList = new ArrayList<>();
+    public List<ItemDto> search(String text) {
+        List<ItemDto> itemList = new ArrayList<>();
         if (text.isEmpty()) {
             return itemList;
         }
@@ -158,6 +140,7 @@ public class ItemServiceImpl implements ItemService {
         itemList = Stream.concat(findByDescription.stream(), findByName.stream())
                 .distinct()
                 .filter(Item::getAvailable)
+                .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
         return itemList;
     }
@@ -182,11 +165,16 @@ public class ItemServiceImpl implements ItemService {
             throw new ValidationException("Комментарий не может быть оставлен к будущему бронированию");
         }
         Comment comment = CommentMapper.toComment(commentDto);
-        comment.setItem(getItem(itemId));
+        comment.setItem(itemRepository.findById(itemId).get());
         comment.setAuthor(user);
         comment.setCreated(LocalDateTime.now());
         commentRepository.save(comment);
         return CommentMapper.toCommentDto(comment);
+    }
+
+    @Override
+    public void delete(Long itemId) {
+        itemRepository.deleteById(itemId);
     }
 
     private ItemDto setLastAndNextBookingForItem(ItemDto itemDto) {

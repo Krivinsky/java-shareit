@@ -36,7 +36,7 @@ public class ItemRequestController {
     @GetMapping
     public List<ItemRequestDtoResp> getByUser(@RequestHeader("X-Sharer-User-Id") Long userId) {
         List<ItemRequestDtoResp> itemRequestDtoResps = itemRequestService.getByUser(userId);
-        log.info("Получены запросы от пользователя " + userId );
+        log.info("Получены запросы от пользователя " + userId);
         return itemRequestDtoResps;
     }
 
@@ -45,7 +45,7 @@ public class ItemRequestController {
                                            @Min(0) @RequestParam (value = "from", required = false, defaultValue = "0") Long from,
                                            @Min (1) @RequestParam (value = "size", required = false, defaultValue = "1") Long size) {
         List<ItemRequestDtoResp> itemRequests = itemRequestService.getAll(from, size, userId);
-        log.info("Получены запросы других пользователей в количестве - "+ itemRequests.size());
+        log.info("Получены запросы других пользователей в количестве - " + itemRequests.size());
         return itemRequests;
     }
 

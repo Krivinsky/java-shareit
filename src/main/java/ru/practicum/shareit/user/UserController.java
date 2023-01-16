@@ -10,7 +10,6 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -27,14 +26,14 @@ public class UserController {
     @PostMapping
     public UserDto create(@Valid @RequestBody UserDto userDto) {
         log.info("создан пользователь с ID - " + userDto.getId());
-        return userService.create(userDto);
+        return userService.createUser(userDto);
     }
 
     @PatchMapping("/{userId}")
     public UserDto update(@RequestBody UserDto userDto, @PathVariable Long userId) throws NotFoundException {
-        User user = userService.update(userId, userDto);
-        log.info("обновлен пользователь с ID - " + user.getId());
-        return UserMapper.toUserDto(user);
+        UserDto userDto1 = userService.updateUser(userId, userDto);
+        log.info("обновлен пользователь с ID - " + userDto1.getId());
+        return userDto1;
     }
 
     @GetMapping("/{userId}")
@@ -54,11 +53,6 @@ public class UserController {
     public void deleteUser(@PathVariable Long userId) throws NotFoundException {
         log.info("удален пользователь с ID " + userId);
         userService.delete(userId);
-    }
-
-    @PutMapping
-    public void put() throws NotFoundException {
-        throw new NotFoundException("такого эндпоинта не существует");
     }
 
     @ExceptionHandler

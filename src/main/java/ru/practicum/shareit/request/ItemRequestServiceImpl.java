@@ -18,7 +18,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class ItemRequestServiceImpl implements ItemRequestService{
+public class ItemRequestServiceImpl implements ItemRequestService {
 
     private final ItemRequestRepository itemRequestRepository;
 
@@ -58,7 +58,6 @@ public class ItemRequestServiceImpl implements ItemRequestService{
         if (user.isEmpty()) {
             throw new NotFoundException("Не найден пользователь с id " + userId);
         }
-
         List<ItemRequest> itemRequests =
                 itemRequestRepository.findAllByRequestorIdOrderByCreatedAsc(userId);
 
@@ -76,8 +75,8 @@ public class ItemRequestServiceImpl implements ItemRequestService{
         if (user.isEmpty()) {
             throw new NotFoundException("Не найден пользователь с id " + userId);
         }
-        List<ItemRequestDtoResp> requestPage = itemRequestRepository.
-                findAllByRequestorNotLikeOrderByCreatedAsc(user.get(), PageRequest.of(from.intValue(), size.intValue()))
+        List<ItemRequestDtoResp> requestPage = itemRequestRepository
+                .findAllByRequestorNotLikeOrderByCreatedAsc(user.get(), PageRequest.of(from.intValue(), size.intValue()))
                 .stream()
                 .map(ItemRequestMapper::toItemRequestDtoResp)
                 .collect(Collectors.toList());
