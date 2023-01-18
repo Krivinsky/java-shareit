@@ -140,8 +140,24 @@ class ItemControllerTest {
     @Test
     void getItemTest() {
         UserDto userDto = userController.create(userDtoNew);
+        UserDto userTwo = userController.create(UserDto.builder().name("Leo").email("Leo@mail.com").build());
         ItemDto itemDto = itemController.creatItem(1L, itemDtoNew);
+        BookingDto bookingDto = BookingDto.builder()
+                .id(1L)
+                .start(LocalDateTime.now().plusNanos(100000000))
+                .end(LocalDateTime.now().plusNanos(200000000))
+                .itemId(itemDto.getId())
+                .bookerId(1L)
+                .build();
+        bookingController.creatBooking(userTwo.getId(), bookingDto);
         assertEquals(itemDto.getId(), itemController.getItem(userDto.getId(), itemDto.getId()).getId());
+    }
+
+    @Test
+    void getItemTestNotFoundItem() {
+        UserDto userDto = userController.create(userDtoNew);
+//        ItemDto itemDto = itemController.creatItem(1L, itemDtoNew);
+        assertThrows(NotFoundException.class, () -> itemController.getItem(userDto.getId(), 1L));
     }
 
     @Test
