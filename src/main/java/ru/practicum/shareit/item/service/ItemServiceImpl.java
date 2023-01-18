@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.service;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingMapper;
@@ -21,9 +22,11 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class ItemServiceImpl implements ItemService {
@@ -89,7 +92,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> getAll(Long userId) throws NotFoundException {
+    public List<ItemDto> getAll(Long userId, Long from, Long size) throws NotFoundException {
         Optional<User> optionalUser = userRepository.findById(userId);
         if (userId == 0) {
             return itemRepository.findAll().stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
@@ -98,13 +101,13 @@ public class ItemServiceImpl implements ItemService {
                 throw new NotFoundException("Пользователь не найден");
             }
         }
-        return getItemsByUser(userId);
+        return getItemsByUser(userId, from, size);
     }
 
-    private List<ItemDto> getItemsByUser(Long userId) {
+    private List<ItemDto> getItemsByUser(Long userId, Long from, Long size) {
         Optional<User> optionalUser = userRepository.findById(userId);
         User user = optionalUser.get();
-        return itemRepository.findAllByOwnerOrderById(user)
+        return itemRepository.findAllByOwner(user, PageRequest.of(from.intValue(), size.intValue()))
                 .stream()
                 .map(ItemMapper::toItemDto)
                 .map(this::setLastAndNextBookingForItem)
@@ -130,19 +133,16 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> search(String text) {
+    public List<ItemDto> search(String text, Long from, Long size) {
         List<ItemDto> itemList = new ArrayList<>();
         if (text.isEmpty()) {
             return itemList;
         }
-        List<Item> findByName = itemRepository.findItemByNameContainsIgnoreCase(text);
-        List<Item> findByDescription = itemRepository.findItemByDescriptionContainsIgnoreCase(text);
-        itemList = Stream.concat(findByDescription.stream(), findByName.stream())
-                .distinct()
-                .filter(Item::getAvailable)
+
+        return itemRepository.search(text, PageRequest.of(from.intValue(), size.intValue()))
+                .stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
-        return itemList;
     }
 
     @Override

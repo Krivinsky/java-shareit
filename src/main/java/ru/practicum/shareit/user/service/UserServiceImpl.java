@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
         try {
             return UserMapper.toUserDto(userRepository.save(userForUpdate));
         } catch (RuntimeException ex) {
-            throw new ConflictException("Такой пользователь уже существует");
+            throw new ConflictException("Ошибка входных данных");
         }
     }
 

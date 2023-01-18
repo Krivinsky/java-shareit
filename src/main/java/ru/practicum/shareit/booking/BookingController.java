@@ -7,7 +7,10 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoResponse;
 import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.exeption.*;
+import ru.practicum.shareit.exeption.ErrorResponse;
+import ru.practicum.shareit.exeption.ItemException;
+import ru.practicum.shareit.exeption.NotFoundException;
+import ru.practicum.shareit.exeption.UnsupportedState;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -68,6 +71,12 @@ public class BookingController {
                                                      @Min (1) @RequestParam (value = "size", required = false, defaultValue = "10") Long size) throws UnsupportedState, NotFoundException {
         log.info("Получен список бронирований");
         return bookingService.getOwnerItemsAll(userId, state, from, size);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleIncorrectParameter(NotFoundException e) {
+        return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler

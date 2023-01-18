@@ -7,11 +7,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.exeption.NotFoundException;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
-import ru.practicum.shareit.request.dto.ItemRequestDtoResp;
 import ru.practicum.shareit.user.UserController;
 import ru.practicum.shareit.user.dto.UserDto;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -25,16 +25,10 @@ class ItemRequestControllerTest {
 
     private UserDto userDto;
 
-    private ItemRequestDtoResp itemRequestDtoResp;
-
     private ItemRequestDto itemRequestDto;
 
     @BeforeEach
     void setUp() {
-        itemRequestDtoResp = ItemRequestDtoResp.builder()
-                .id(1L)
-                .description("itemRequestDtoDescription")
-                .build();
 
         userDto = UserDto.builder()
                 .id(1L)
@@ -63,14 +57,14 @@ class ItemRequestControllerTest {
     @Test
     void getByUserTest() {
         UserDto user = userController.create(userDto);
-        ItemRequest itemRequest = itemRequestController.create(user.getId(), itemRequestDto);
+        itemRequestController.create(user.getId(), itemRequestDto);
         assertEquals(1, itemRequestController.getByUser(user.getId()).size());
     }
 
     @Test
     void getAllTest() {
         UserDto user = userController.create(userDto);
-        ItemRequest itemRequest = itemRequestController.create(user.getId(), itemRequestDto);
+        itemRequestController.create(user.getId(), itemRequestDto);
         assertEquals(0, itemRequestController.getAll(user.getId(),0L, 10L).size());
         UserDto user2 = userController.create(UserDto.builder().name("Leo").email("Leo@email.com").build());
         assertEquals(1, itemRequestController.getAll(user2.getId(), 0L, 10L).size());

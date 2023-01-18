@@ -42,8 +42,10 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemDto> getAll(@RequestHeader ("X-Sharer-User-Id") Long userId) throws NotFoundException {
-        List<ItemDto> list = itemService.getAll(userId);
+    public List<ItemDto> getAll(@RequestHeader ("X-Sharer-User-Id") Long userId,
+                                @Min (0) @RequestParam (value = "from", required = false, defaultValue = "0") Long from,
+                                @Min (1) @RequestParam (value = "size", required = false, defaultValue = "10") Long size) throws NotFoundException {
+        List<ItemDto> list = itemService.getAll(userId, from, size);
         log.info("получен список из " + list.size() + " вещей");
         return list;
     }
@@ -58,8 +60,10 @@ public class ItemController {
 
     @GetMapping("/search")
     public List<ItemDto> search(@RequestHeader ("X-Sharer-User-Id") Long userId,
-                                @RequestParam String text) {
-        List<ItemDto> items = itemService.search(text);
+                                @RequestParam String text,
+                                @Min (0) @RequestParam (value = "from", required = false, defaultValue = "0") Long from,
+                                @Min (1) @RequestParam (value = "size", required = false, defaultValue = "10") Long size) {
+        List<ItemDto> items = itemService.search(text,  from, size);
         log.info("получен список из " + items.size() + " вещей");
         return items;
     }

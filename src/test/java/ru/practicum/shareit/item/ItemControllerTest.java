@@ -5,11 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingController;
 import ru.practicum.shareit.booking.BookingMapper;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.BookingDtoResponse;
 import ru.practicum.shareit.comment.CommentDto;
 import ru.practicum.shareit.exeption.NotFoundException;
 import ru.practicum.shareit.exeption.ValidationException;
@@ -104,11 +102,7 @@ class ItemControllerTest {
     @Test
     void updateItemTestNotFoundItem() {
         userDtoNew = userController.create(userDtoNew);
-        ItemDto itemDtoForUpdate = ItemDto.builder()
-                .name("ItemName")
-                .description("ItemDescription")
-                .available(true)
-                .build();
+
 
         assertThrows(NotFoundException.class,
                 () -> itemController.updateItem(userDtoNew.getId(), itemDtoNew, 99L));
@@ -117,30 +111,30 @@ class ItemControllerTest {
     @Test
     void getAllTest() {
         UserDto userDto = userController.create(userDtoNew);
-        ItemDto itemDto = itemController.creatItem(1L, itemDtoNew);
+        itemController.creatItem(1L, itemDtoNew);
         ItemDto itemDto2 = ItemDto.builder()
                 .name("ItemName2")
                 .description("ItemDescription2")
                 .available(true)
                 .build();
-        ItemDto itemDto3 = itemController.creatItem(1L, itemDto2);
-        List<ItemDto> result = itemController.getAll(userDto.getId());
-        assertEquals(result.size(), 2);
+        itemController.creatItem(1L, itemDto2);
+        List<ItemDto> result = itemController.getAll(userDto.getId(), 0L, 1L);
+        assertEquals(result.size(), 1);
 
     }
 
     @Test
     void getAllTestNotFoundUser() {
-        UserDto userDto = userController.create(userDtoNew);
-        ItemDto itemDto = itemController.creatItem(1L, itemDtoNew);
+        userController.create(userDtoNew);
+        itemController.creatItem(1L, itemDtoNew);
         ItemDto itemDto2 = ItemDto.builder()
                 .name("ItemName2")
                 .description("ItemDescription2")
                 .available(true)
                 .build();
-        ItemDto itemDto3 = itemController.creatItem(1L, itemDto2);
+        itemController.creatItem(1L, itemDto2);
 
-        assertThrows(NotFoundException.class, () -> itemController.getAll(99L));
+        assertThrows(NotFoundException.class, () -> itemController.getAll(99L, 0L, 1L));
     }
 
     @Test
@@ -154,12 +148,12 @@ class ItemControllerTest {
     void search() {
         userController.create(userDtoNew);
         itemController.creatItem(1L, itemDtoNew);
-        assertEquals(itemController.search(1L, "Desc").size(), 1);
+        assertEquals(itemController.search(1L, "Desc", 0L, 1L).size(), 1);  ///////////////////////////////////////////////
     }
 
     @Test
     void createCommentTest() throws InterruptedException {
-        UserDto user = userController.create(userDtoNew);
+        userController.create(userDtoNew);
         UserDto userTwo = userController.create(UserDto.builder().name("Leo").email("Leo@mail.com").build());
         ItemDto itemOne = itemController.creatItem(1L, itemDtoNew);
         BookingDto bookingDto = BookingDto.builder()
@@ -169,14 +163,14 @@ class ItemControllerTest {
                 .itemId(itemOne.getId())
                 .bookerId(1L)
                 .build();
-        BookingDtoResponse bookingDtoResponse = bookingController.creatBooking(userTwo.getId(), bookingDto);
+        bookingController.creatBooking(userTwo.getId(), bookingDto);
         bookingController.updateBooking(1L, 1L, true);
         Thread.sleep(3000);
         CommentDto commentDto = CommentDto.builder()
                 .created(LocalDateTime.now().plusSeconds(1))
                 .text("text")
                 .build();
-        Booking booking = BookingMapper.toBooking(bookingDto);
+        BookingMapper.toBooking(bookingDto);
         itemController.createComment(itemOne.getId(), userTwo.getId(), commentDto);
     }
 
@@ -185,7 +179,7 @@ class ItemControllerTest {
         CommentDto commentDto = CommentDto.builder()
                 .text("text")
                 .build();
-        UserDto user = userController.create(userDtoNew);
+        userController.create(userDtoNew);
         ItemDto itemOne = itemController.creatItem(1L, itemDtoNew);
         UserDto userTwo = userController.create(UserDto.builder().name("Leo").email("Leo@mail.com").build());
         BookingDto bookingDto = BookingDto.builder()
@@ -195,7 +189,7 @@ class ItemControllerTest {
                 .itemId(itemOne.getId())
                 .bookerId(1L)
                 .build();
-        BookingDtoResponse bookingDtoResponse = bookingController.creatBooking(userTwo.getId(), bookingDto);
+        bookingController.creatBooking(userTwo.getId(), bookingDto);
         assertThrows(ValidationException.class,
                 () -> itemController.createComment(itemOne.getId(), userTwo.getId(), commentDto));
     }
@@ -204,8 +198,8 @@ class ItemControllerTest {
     void deleteItemTest() {
         userController.create(userDtoNew);
         itemController.creatItem(1L, itemDtoNew);
-        assertEquals(1, itemController.getAll(1L).size());
+        assertEquals(1, itemController.getAll(1L, 0L, 1L).size());
         itemController.deleteItem(1L);
-        assertEquals(0, itemController.getAll(1L).size());
+        assertEquals(0, itemController.getAll(1L, 0L, 1L).size());
     }
 }

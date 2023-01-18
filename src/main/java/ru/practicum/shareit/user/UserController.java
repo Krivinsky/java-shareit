@@ -56,7 +56,7 @@ public class UserController {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.CONFLICT)  //////////////////////////
     public ErrorResponse handleServerException(final ConflictException e) {
         return new ErrorResponse(e.getMessage());
     }

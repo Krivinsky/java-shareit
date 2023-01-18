@@ -17,7 +17,6 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
-import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -106,7 +105,7 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingDtoResponse> getAll(Long userId, String state, Long from, Long size) throws UnsupportedState {
         PageRequest pageRequest = PageRequest.of(from.intValue() / size.intValue(), size.intValue(), sort);
         User user = userRepository.findById(userId).orElseThrow(() ->
-                new ValidationException("не найден пользователь с id " + userId));
+                new NotFoundException("не найден пользователь с id " + userId));
         List<Booking> bookingDtoList = new ArrayList<>();
         switch (state) {
             case "ALL":

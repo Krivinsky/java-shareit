@@ -12,7 +12,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.comment.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import java.nio.charset.StandardCharsets;
@@ -34,7 +33,6 @@ public class ItemControllerWebMvcTest {
     private static final long USER_ID = 1L;
     private static final String PATH = "/items";
     private static final String PATH_WITH_ID = "/items/1";
-    private static final long ITEM_ID = 1L;
 
     @MockBean
     private ItemService itemService;
@@ -68,8 +66,6 @@ public class ItemControllerWebMvcTest {
 
     @Test
     void creatItemTest() throws Exception {
-        User user1 = new User(USER_ID, "John", "johnn.doe@smile.com");
-        Item item = new Item(ITEM_ID, "ItemName", "ItemDescription", true, user1, null);
         when(itemService.creatItem(any(), any())).thenReturn(itemDto);
 
         mockMvc.perform(post(PATH)
@@ -99,7 +95,7 @@ public class ItemControllerWebMvcTest {
 
     @Test
     void getAllTest() throws Exception {
-        when(itemService.getAll(ITEM_ID)).thenReturn(List.of(itemDto));
+        when(itemService.getAll(anyLong(), anyLong(), anyLong())).thenReturn(List.of(itemDto));
 
         mockMvc.perform(get(PATH)
                         .characterEncoding(StandardCharsets.UTF_8)
@@ -128,7 +124,7 @@ public class ItemControllerWebMvcTest {
 
     @Test
     void searchTest() throws Exception {
-        when(itemService.search(anyString())).thenReturn(List.of(itemDto));
+        when(itemService.search(anyString(), anyLong(), anyLong())).thenReturn(List.of(itemDto));
 
         mockMvc.perform(get(PATH + "/search?text='ItemName'")
                         .characterEncoding(StandardCharsets.UTF_8)

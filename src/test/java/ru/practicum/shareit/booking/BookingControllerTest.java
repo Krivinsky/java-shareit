@@ -15,11 +15,11 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.UserController;
 import ru.practicum.shareit.user.dto.UserDto;
 
-import javax.validation.ValidationException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static ru.practicum.shareit.booking.Status.APPROVED;
 import static ru.practicum.shareit.booking.Status.WAITING;
 
@@ -36,8 +36,6 @@ class BookingControllerTest {
     private UserController userController;
 
     BookingDto bookingDto;
-
-    BookingDtoResponse bookingDtoResponse;
 
     UserDto userDtoOne;
 
@@ -77,15 +75,15 @@ class BookingControllerTest {
     void creatBooking() {
         UserDto userDtoNew = userController.create(userDtoOne);
         UserDto userDtoNew2 = userController.create(userDtoTwo);
-        ItemDto itemDtoNew = itemController.creatItem(userDtoNew.getId(), itemDto);
+        itemController.creatItem(userDtoNew.getId(), itemDto);
         BookingDtoResponse bookingDtoResponse1 = bookingController.creatBooking(userDtoNew2.getId(), bookingDto);
         assertEquals(bookingController.getBooking(userDtoNew2.getId(), bookingDtoResponse1.getId()).getId(), 1L);
     }
 
     @Test
     void creatBookingWhenOwnItem() {
-        UserDto userDtoNew = userController.create(userDtoOne);
-        ItemDto itemDtoNew = itemController.creatItem(1L, itemDto);
+        userController.create(userDtoOne);
+        itemController.creatItem(1L, itemDto);
         assertThrows(NotFoundException.class, () -> bookingController.creatBooking(1L, bookingDto));
     }
 
@@ -106,7 +104,7 @@ class BookingControllerTest {
                 .build();
         UserDto userDtoNew = userController.create(userDtoOne);
         UserDto userDtoNew2 = userController.create(userDtoTwo);
-        ItemDto itemDtoNew = itemController.creatItem(userDtoNew.getId(), itemDto);
+        itemController.creatItem(userDtoNew.getId(), itemDto);
         assertThrows(ItemException.class,
                 () -> bookingController.creatBooking(userDtoNew2.getId(), bookingDtoForException));
     }
@@ -115,7 +113,7 @@ class BookingControllerTest {
     void updateBooking() {
         UserDto userDtoNew = userController.create(userDtoOne);
         UserDto userDtoNew2 = userController.create(userDtoTwo);
-        ItemDto itemDtoNew = itemController.creatItem(userDtoNew.getId(), itemDto);
+        itemController.creatItem(userDtoNew.getId(), itemDto);
         BookingDtoResponse bookingDtoResponse1 = bookingController.creatBooking(userDtoNew2.getId(), bookingDto);
         assertEquals(bookingController.getBooking(userDtoNew2.getId(), bookingDtoResponse1.getId()).getStatus(), WAITING);
         bookingController.updateBooking(userDtoNew.getId(), bookingDtoResponse1.getId(), true);
@@ -132,7 +130,7 @@ class BookingControllerTest {
     void getBooking() {
         UserDto userDtoNew = userController.create(userDtoOne);
         UserDto userDtoNew2 = userController.create(userDtoTwo);
-        ItemDto itemDtoNew = itemController.creatItem(userDtoNew.getId(), itemDto);
+        itemController.creatItem(userDtoNew.getId(), itemDto);
         BookingDtoResponse bookingDtoResponse1 = bookingController.creatBooking(userDtoNew2.getId(), bookingDto);
         assertEquals(bookingController.getBooking(userDtoNew2.getId(), bookingDtoResponse1.getId()).getId(), 1L);
     }
@@ -141,8 +139,8 @@ class BookingControllerTest {
     void getAllTest() {
         UserDto userDtoNew = userController.create(userDtoOne);
         UserDto userDtoNew2 = userController.create(userDtoTwo);
-        ItemDto itemDtoNew = itemController.creatItem(userDtoNew.getId(), itemDto);
-        BookingDtoResponse bookingDtoResponse1 = bookingController.creatBooking(userDtoNew2.getId(), bookingDto);
+        itemController.creatItem(userDtoNew.getId(), itemDto);
+        bookingController.creatBooking(userDtoNew2.getId(), bookingDto);
         assertEquals(bookingController.getAll(userDtoNew2.getId(), "ALL", 0L, 10L).size(), 1);
         assertEquals(bookingController.getAll(userDtoNew2.getId(), "CURRENT", 0L, 10L).size(), 0);
         assertEquals(bookingController.getAll(userDtoNew2.getId(), "PAST", 0L, 10L).size(), 0);
@@ -153,7 +151,7 @@ class BookingControllerTest {
 
     @Test
     void getAllTestNotValidation() {
-        assertThrows(ValidationException.class,
+        assertThrows(NotFoundException.class,
                 () -> bookingController.getAll(1L, "ALL", 1L, 10L));
     }
 
@@ -161,18 +159,18 @@ class BookingControllerTest {
     void getAllTestUnknownState() {
         UserDto userDtoNew = userController.create(userDtoOne);
         UserDto userDtoNew2 = userController.create(userDtoTwo);
-        ItemDto itemDtoNew = itemController.creatItem(userDtoNew.getId(), itemDto);
-        BookingDtoResponse bookingDtoResponse1 = bookingController.creatBooking(userDtoNew2.getId(), bookingDto);
+        itemController.creatItem(userDtoNew.getId(), itemDto);
+        bookingController.creatBooking(userDtoNew2.getId(), bookingDto);
         assertThrows(UnsupportedState.class,
-                () -> bookingController.getAll(userDtoNew2.getId(), "Unknown", 0L, 10L).size());
+                () -> bookingController.getAll(userDtoNew2.getId(), "Unknown", 0L, 10L));
     }
 
     @Test
     void getOwnerItemsAllTest() {
         UserDto userDtoNew = userController.create(userDtoOne);
         UserDto userDtoNew2 = userController.create(userDtoTwo);
-        ItemDto itemDtoNew = itemController.creatItem(userDtoNew.getId(), itemDto);
-        BookingDtoResponse bookingDtoResponse1 = bookingController.creatBooking(userDtoNew2.getId(), bookingDto);
+        itemController.creatItem(userDtoNew.getId(), itemDto);
+        bookingController.creatBooking(userDtoNew2.getId(), bookingDto);
 
         List<BookingDtoResponse> all = bookingController.getOwnerItemsAll(userDtoNew.getId(), "ALL", 0L, 10L);
         assertEquals(all.size(), 1);

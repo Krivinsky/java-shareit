@@ -63,7 +63,6 @@ class UserControllerTest {
 
     @Test
     void create_whenUserFound_thenReturnedUser() throws Exception {
-        User user1 = new User(USER_ID, "John", "johnn.doe@smile.com");
         when(userService.createUser(any())).thenReturn(userDto);
 
         mockMvc.perform(post(PATH)
@@ -98,7 +97,7 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(getContentFromFile("user/request/update.json"))
                 )
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().is4xxClientError());
     }
 
     @Test

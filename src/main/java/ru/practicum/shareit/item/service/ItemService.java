@@ -12,13 +12,11 @@ public interface ItemService {
 
     ItemDto updateItem(ItemDto itemDto, Long userId, Long itemId) throws NotFoundException;
 
-    List<ItemDto> getAll(Long userId) throws NotFoundException;
+    List<ItemDto> getAll(Long userId, Long from, Long size) throws NotFoundException;
 
     ItemDto getById(Long itemId, Long userId) throws NotFoundException;
 
-//    Item getItem(Long itemId) throws NotFoundException;
-
-    List<ItemDto> search(String text);
+    List<ItemDto> search(String text, Long from, Long size);
 
     CommentDto creatComment(Long userId, Long itemId, CommentDto commentDto) throws NotFoundException, ValidationException;
 
