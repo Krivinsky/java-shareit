@@ -1,65 +1,69 @@
 package ru.practicum.shareit.user;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.exeption.ConflictException;
+import ru.practicum.shareit.exeption.ErrorResponse;
 import ru.practicum.shareit.exeption.NotFoundException;
-import ru.practicum.shareit.exeption.UserException;
-import ru.practicum.shareit.exeption.ValidationException;
-import ru.practicum.shareit.user.dto.UserDtoRequest;
-import ru.practicum.shareit.user.dto.UserDtoResponse;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.service.UserService;
 
-import java.util.ArrayList;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "/users")
-@RequiredArgsConstructor
 @Slf4j
 public class UserController {
 
     private final UserService userService;
 
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
     @PostMapping
-    public UserDtoResponse creat(@RequestBody UserDtoRequest userDtoRequest) throws UserException, ValidationException {
-        User user = userService.creatUser(userDtoRequest);
-        log.info("создан пользователь с ID - " + user.getId());
-        return UserMapper.toUserDtoResponse(user);
+    public UserDto create(@Valid @RequestBody UserDto userDto) {
+        log.info("создан пользователь с ID - " + userDto.getId());
+        return userService.createUser(userDto);
     }
 
     @PatchMapping("/{userId}")
-    public UserDtoResponse update(@RequestBody UserDtoRequest userDtoRequest, @PathVariable Long userId) throws UserException, ValidationException {
-        User user = userService.update(userDtoRequest, userId);
-        log.info("обновлен пользователь с ID - " + user.getId());
-        return UserMapper.toUserDtoResponse(user);
+    public UserDto update(@RequestBody UserDto userDto, @PathVariable Long userId) throws NotFoundException {
+        UserDto userDto1 = userService.updateUser(userId, userDto);
+        log.info("обновлен пользователь с ID - " + userDto1.getId());
+        return userDto1;
     }
 
     @GetMapping("/{userId}")
-    public UserDtoResponse getUser(@PathVariable Long userId) throws NotFoundException {
-        User user = userService.getUser(userId);
-        log.info("получен пользователь с ID - " + user.getId());
-        return UserMapper.toUserDtoResponse(user);
+    public UserDto getUser(@PathVariable Long userId) throws NotFoundException {
+        UserDto userDto = userService.getById(userId);
+        log.info("получен пользователь с ID - " + userDto.getId());
+        return userDto;
     }
 
     @GetMapping
-    public List<UserDtoResponse> getAllUsers() {
-        List<UserDtoResponse> usersResp = new ArrayList<>();
-        List<User> users = userService.getAllUsers();
-        for (User user : users) {
-            usersResp.add(UserMapper.toUserDtoResponse(user));
-        }
-        log.info("получен список из "  + usersResp.size() + " пользователей ");
-        return usersResp;
+    public List<UserDto> getAllUsers() {
+        log.info("получен список пользователей ");
+        return userService.getAll();
     }
 
     @DeleteMapping("/{userId}")
-    public void deleteUser(@PathVariable Long userId) {
+    public void deleteUser(@PathVariable Long userId) throws NotFoundException {
         log.info("удален пользователь с ID " + userId);
-        userService.deleteUser(userId);
+        userService.delete(userId);
     }
 
-    @PutMapping  //  ("/{userId}")
-    public void put() throws NotFoundException {
-        throw new NotFoundException("такого эндпоинта не существует");
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)  //////////////////////////
+    public ErrorResponse handleServerException(final ConflictException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleNotFoundException(final NotFoundException e) {
+        return new ErrorResponse(e.getMessage());
     }
 }
