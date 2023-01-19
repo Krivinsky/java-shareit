@@ -10,7 +10,6 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -26,36 +25,28 @@ public class UserController {
 
     @PostMapping
     public UserDto create(@Valid @RequestBody UserDto userDto) {
-        User user = UserMapper.toUser(userDto);
-        userService.create(user);
-        log.info("создан пользователь с ID - " + user.getId());
-        return UserMapper.toUserDto(user);
+        log.info("создан пользователь с ID - " + userDto.getId());
+        return userService.createUser(userDto);
     }
 
     @PatchMapping("/{userId}")
     public UserDto update(@RequestBody UserDto userDto, @PathVariable Long userId) throws NotFoundException {
-        User user = userService.update(userId, userDto);
-        log.info("обновлен пользователь с ID - " + user.getId());
-        return UserMapper.toUserDto(user);
+        UserDto userDto1 = userService.updateUser(userId, userDto);
+        log.info("обновлен пользователь с ID - " + userDto1.getId());
+        return userDto1;
     }
 
     @GetMapping("/{userId}")
     public UserDto getUser(@PathVariable Long userId) throws NotFoundException {
-        User user = userService.getById(userId);
-        log.info("получен пользователь с ID - " + user.getId());
-        return UserMapper.toUserDto(user);
+        UserDto userDto = userService.getById(userId);
+        log.info("получен пользователь с ID - " + userDto.getId());
+        return userDto;
     }
 
     @GetMapping
     public List<UserDto> getAllUsers() {
-        List<UserDto> usersResp = new ArrayList<>();
-        List<User> users = userService.getAll();
-        for (User user : users) {
-            usersResp.add(UserMapper.toUserDto(user));
-        }
-
-        log.info("получен список из "  + usersResp.size() + " пользователей ");
-        return usersResp;
+        log.info("получен список пользователей ");
+        return userService.getAll();
     }
 
     @DeleteMapping("/{userId}")
@@ -64,13 +55,8 @@ public class UserController {
         userService.delete(userId);
     }
 
-    @PutMapping
-    public void put() throws NotFoundException {
-        throw new NotFoundException("такого эндпоинта не существует");
-    }
-
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.CONFLICT)  //////////////////////////
     public ErrorResponse handleServerException(final ConflictException e) {
         return new ErrorResponse(e.getMessage());
     }

@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoResponse;
@@ -12,12 +13,14 @@ import ru.practicum.shareit.exeption.NotFoundException;
 import ru.practicum.shareit.exeption.UnsupportedState;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 
 @RestController
 @RequestMapping(path = "/bookings")
 @Slf4j
+@Validated
 public class BookingController {
 
     private final BookingService bookingService;
@@ -53,17 +56,27 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDtoResponse> getAll(@RequestHeader ("X-Sharer-User-Id") Long userId,
-                                           @RequestParam (value = "state", required = false, defaultValue =  "ALL") String state) throws UnsupportedState {
-        List<BookingDtoResponse> bookingDtoResponse = bookingService.getAll(userId, state);
-        log.info("получен список из - " + bookingDtoResponse.size() + "бронирований");
+                                           @RequestParam (value = "state", required = false, defaultValue =  "ALL") String state,
+                                           @Min (0) @RequestParam (value = "from", required = false, defaultValue = "0") Long from,
+                                           @Min (1) @RequestParam (value = "size", required = false, defaultValue = "10") Long size) throws UnsupportedState {
+        List<BookingDtoResponse> bookingDtoResponse = bookingService.getAll(userId, state, from, size);
+        log.info("получен список из - " + bookingDtoResponse.size() + " бронирований");
         return bookingDtoResponse;
     }
 
     @GetMapping("/owner")
     public List<BookingDtoResponse> getOwnerItemsAll(@RequestHeader ("X-Sharer-User-Id") Long userId,
-                                                     @RequestParam (value = "state", required = false, defaultValue =  "ALL") String state) throws UnsupportedState, NotFoundException {
+                                                     @RequestParam (value = "state", required = false, defaultValue =  "ALL") String state,
+                                                     @Min (0) @RequestParam (value = "from", required = false, defaultValue = "0") Long from,
+                                                     @Min (1) @RequestParam (value = "size", required = false, defaultValue = "10") Long size) throws UnsupportedState, NotFoundException {
         log.info("Получен список бронирований");
-        return bookingService.getOwnerItemsAll(userId, state);
+        return bookingService.getOwnerItemsAll(userId, state, from, size);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleIncorrectParameter(NotFoundException e) {
+        return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
