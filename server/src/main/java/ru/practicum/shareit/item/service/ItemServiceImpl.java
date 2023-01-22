@@ -107,15 +107,15 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
     }
 
-    private List<ItemDto> getItemsByUser(Long userId, Long from, Long size) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        User user = optionalUser.get();
-        return itemRepository.findAllByOwner(user, PageRequest.of(from.intValue(), size.intValue()))
-                .stream()
-                .map(ItemMapper::toItemDto)
-                .map(this::setLastAndNextBookingForItem)
-                .collect(Collectors.toList());
-    }
+//    private List<ItemDto> getItemsByUser(Long userId, Long from, Long size) {
+//        Optional<User> optionalUser = userRepository.findById(userId);
+//        User user = optionalUser.get();
+//        return itemRepository.findAllByOwner(user, PageRequest.of(from.intValue(), size.intValue()))
+//                .stream()
+//                .map(ItemMapper::toItemDto)
+//                .map(this::setLastAndNextBookingForItem)
+//                .collect(Collectors.toList());
+//    }
 
     @Override
     public ItemDto getById(Long itemId, Long userId) throws NotFoundException {

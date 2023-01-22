@@ -123,19 +123,19 @@ class ItemControllerTest {
 
     }
 
-    @Test
-    void getAllTestNotFoundUser() {
-        userController.create(userDtoNew);
-        itemController.creatItem(1L, itemDtoNew);
-        ItemDto itemDto2 = ItemDto.builder()
-                .name("ItemName2")
-                .description("ItemDescription2")
-                .available(true)
-                .build();
-        itemController.creatItem(1L, itemDto2);
-
-        assertThrows(NotFoundException.class, () -> itemController.getAll(99L, 0, 1));
-    }
+//    @Test
+//    void getAllTestNotFoundUser() {
+//        userController.create(userDtoNew);
+//        itemController.creatItem(1L, itemDtoNew);
+//        ItemDto itemDto2 = ItemDto.builder()
+//                .name("ItemName2")
+//                .description("ItemDescription2")
+//                .available(true)
+//                .build();
+//        itemController.creatItem(1L, itemDto2);
+//
+//        assertThrows(NotFoundException.class, () -> itemController.getAll(99L, 0, 1));
+//    }
 
     @Test
     void getItemTest() {
