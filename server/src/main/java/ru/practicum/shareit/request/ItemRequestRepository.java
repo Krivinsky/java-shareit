@@ -1,5 +1,6 @@
 package ru.practicum.shareit.request;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import ru.practicum.shareit.user.User;
@@ -10,5 +11,5 @@ public interface ItemRequestRepository extends PagingAndSortingRepository<ItemRe
 
     List<ItemRequest> findAllByRequestorIdOrderByCreatedAsc(Long userId);
 
-    List<ItemRequest> findAllByRequestorNotLikeOrderByCreatedAsc(User user, Pageable pageable);
+    Page<ItemRequest> findAllByRequestorIsNot(User user, Pageable pageable);
 }

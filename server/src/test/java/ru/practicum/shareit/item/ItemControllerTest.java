@@ -118,7 +118,7 @@ class ItemControllerTest {
                 .available(true)
                 .build();
         itemController.creatItem(1L, itemDto2);
-        List<ItemDto> result = itemController.getAll(userDto.getId(), 0L, 1L);
+        List<ItemDto> result = itemController.getAll(userDto.getId(), 0, 1);
         assertEquals(result.size(), 1);
 
     }
@@ -134,7 +134,7 @@ class ItemControllerTest {
                 .build();
         itemController.creatItem(1L, itemDto2);
 
-        assertThrows(NotFoundException.class, () -> itemController.getAll(99L, 0L, 1L));
+        assertThrows(NotFoundException.class, () -> itemController.getAll(99L, 0, 1));
     }
 
     @Test
@@ -214,8 +214,8 @@ class ItemControllerTest {
     void deleteItemTest() {
         userController.create(userDtoNew);
         itemController.creatItem(1L, itemDtoNew);
-        assertEquals(1, itemController.getAll(1L, 0L, 1L).size());
+        assertEquals(1, itemController.getAll(1L, 0, 1).size());
         itemController.deleteItem(1L);
-        assertEquals(0, itemController.getAll(1L, 0L, 1L).size());
+        assertEquals(0, itemController.getAll(1L, 0, 1).size());
     }
 }

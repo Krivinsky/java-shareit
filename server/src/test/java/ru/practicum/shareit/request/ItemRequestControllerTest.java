@@ -65,9 +65,9 @@ class ItemRequestControllerTest {
     void getAllTest() {
         UserDto user = userController.create(userDto);
         itemRequestController.create(user.getId(), itemRequestDto);
-        assertEquals(0, itemRequestController.getAll(user.getId(),0L, 10L).size());
+        assertEquals(0, itemRequestController.getAll(user.getId(),0, 10).size());
         UserDto user2 = userController.create(UserDto.builder().name("Leo").email("Leo@email.com").build());
-        assertEquals(1, itemRequestController.getAll(user2.getId(), 0L, 10L).size());
+        assertEquals(1, itemRequestController.getAll(user2.getId(), 0, 10).size());
     }
 
     @Test

@@ -42,8 +42,8 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     public List<ItemRequestDtoResp> getAll(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                           @Min(0) @RequestParam (value = "from", required = false, defaultValue = "0") Long from,
-                                           @Min (1) @RequestParam (value = "size", required = false, defaultValue = "1") Long size) {
+                                           @RequestParam (value = "from", defaultValue = "0") int from,
+                                           @RequestParam (value = "size", defaultValue = "1") int size) {
         List<ItemRequestDtoResp> itemRequests = itemRequestService.getAll(from, size, userId);
         log.info("Получены запросы других пользователей в количестве - " + itemRequests.size());
         return itemRequests;
@@ -56,16 +56,16 @@ public class ItemRequestController {
         log.info("Получен запрос с Id - " + requestId);
         return itemRequestDtoResp;
     }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleNotFoundException(NotFoundException e) {
-        return new ErrorResponse(e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleIncorrectParameterException(ValidationException e) {
-        return new ErrorResponse(e.getMessage());
-    }
+//
+//    @ExceptionHandler
+//    @ResponseStatus(HttpStatus.NOT_FOUND)
+//    public ErrorResponse handleNotFoundException(NotFoundException e) {
+//        return new ErrorResponse(e.getMessage());
+//    }
+//
+//    @ExceptionHandler
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    public ErrorResponse handleIncorrectParameterException(ValidationException e) {
+//        return new ErrorResponse(e.getMessage());
+//    }
 }

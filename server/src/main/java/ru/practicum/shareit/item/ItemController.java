@@ -43,8 +43,8 @@ public class ItemController {
 
     @GetMapping
     public List<ItemDto> getAll(@RequestHeader ("X-Sharer-User-Id") Long userId,
-                                @Min (0) @RequestParam (value = "from", required = false, defaultValue = "0") Long from,
-                                @Min (1) @RequestParam (value = "size", required = false, defaultValue = "10") Long size) throws NotFoundException {
+                                @RequestParam (value = "from", required = false, defaultValue = "0") int from,
+                                @RequestParam (value = "size", required = false, defaultValue = "10") int size) throws NotFoundException {
         List<ItemDto> list = itemService.getAll(userId, from, size);
         log.info("получен список из " + list.size() + " вещей");
         return list;

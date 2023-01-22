@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 
 @Controller
 @RequestMapping(path = "/items")
@@ -35,8 +37,8 @@ public class ItemController {
 
 	@GetMapping
 	public ResponseEntity<Object> getAllItems(@RequestHeader ("X-Sharer-User-Id") Long userId,
-											  @Min (0) @RequestParam (value = "from", required = false, defaultValue = "0") Long from,
-											  @Min (1) @RequestParam (value = "size", required = false, defaultValue = "10") Long size) {
+											  @PositiveOrZero @RequestParam (value = "from", required = false, defaultValue = "0") Integer from,
+											  @Positive @RequestParam (value = "size", required = false, defaultValue = "10") Integer size) {
 		log.info("получен список пользователей ");
 		return itemClient.getAll(userId, from, size);
 	}

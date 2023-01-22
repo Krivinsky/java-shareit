@@ -12,7 +12,7 @@ public interface ItemService {
 
     ItemDto updateItem(ItemDto itemDto, Long userId, Long itemId) throws NotFoundException;
 
-    List<ItemDto> getAll(Long userId, Long from, Long size) throws NotFoundException;
+    List<ItemDto> getAll(Long userId, int from, int size) throws NotFoundException;
 
     ItemDto getById(Long itemId, Long userId) throws NotFoundException;
 

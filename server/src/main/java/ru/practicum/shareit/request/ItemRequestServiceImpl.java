@@ -1,6 +1,7 @@
 package ru.practicum.shareit.request;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exeption.NotFoundException;
 import ru.practicum.shareit.exeption.ValidationException;
@@ -70,18 +71,18 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public List<ItemRequestDtoResp> getAll(Long from, Long size, Long userId) {
+    public List<ItemRequestDtoResp> getAll(int from, int size, Long userId) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
             throw new NotFoundException("Не найден пользователь с id " + userId);
         }
-        List<ItemRequestDtoResp> requestPage = itemRequestRepository
-                .findAllByRequestorNotLikeOrderByCreatedAsc(user.get(), PageRequest.of(from.intValue(), size.intValue()))
+        List<ItemRequestDtoResp> dtoRespList =  itemRequestRepository.findAllByRequestorIsNot(user.get(),
+                        PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "created")))
                 .stream()
                 .map(ItemRequestMapper::toItemRequestDtoResp)
                 .collect(Collectors.toList());
-        requestPage.forEach(this::setItems);
-        return requestPage;
+        dtoRespList.forEach(this::setItems);
+        return dtoRespList;
     }
 
     @Override

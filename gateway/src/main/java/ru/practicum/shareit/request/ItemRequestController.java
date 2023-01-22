@@ -31,8 +31,8 @@ public class ItemRequestController {
 
 	@GetMapping("/all")
 	public ResponseEntity<Object> getAll(@RequestHeader("X-Sharer-User-Id") long userId,
-										 @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
-										 @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
+										 @Valid @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
+										 @Valid @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
 		log.info("Получены запросы других пользователей от пользователя - " + userId);
 		return itemRequestClient.getAll(userId, from, size);
 	}
@@ -45,10 +45,8 @@ public class ItemRequestController {
 	}
 
 	@GetMapping
-	public ResponseEntity<Object> getByUser(@RequestHeader ("X-Sharer-User-Id") long userId,
-											@PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
-											@Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
-		return itemRequestClient.getByUser(userId, from, size);
+	public ResponseEntity<Object> getByUser(@RequestHeader ("X-Sharer-User-Id") long userId) {
+		return itemRequestClient.getByUser(userId);
 	}
 
 	@ExceptionHandler

@@ -25,7 +25,7 @@ public class ItemRequestClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> getAll(long userId, Integer from, Integer size) {
+    public ResponseEntity<Object> getAll(long userId, int from, int size) {
         Map<String, Object> parameters = Map.of(
                 "from", from,
                 "size", size
@@ -49,11 +49,7 @@ public class ItemRequestClient extends BaseClient {
         return patch("/" +  bookingId + "?approved={approved}" , userId, parameters, null);
     }
 
-    public ResponseEntity<Object> getByUser(Long userId, Integer from, Integer size) {
-        Map<String, Object> parameters = Map.of(
-                "from", from,
-                "size", size
-        );
-        return get("" + "?from={from}&size={size}", userId, parameters);
+    public ResponseEntity<Object> getByUser(Long userId) {
+        return get("", userId);
     }
 }

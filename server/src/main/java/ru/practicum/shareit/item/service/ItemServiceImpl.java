@@ -22,10 +22,7 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -92,16 +89,22 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> getAll(Long userId, Long from, Long size) throws NotFoundException {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (userId == 0) {
-            return itemRepository.findAll().stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
-        } else {
-            if (optionalUser.isEmpty()) {
-                throw new NotFoundException("Пользователь не найден");
-            }
-        }
-        return getItemsByUser(userId, from, size);
+    public List<ItemDto> getAll(Long userId, int from, int size) throws NotFoundException {
+//        Optional<User> optionalUser = userRepository.findById(userId);
+//        if (userId == 0) {
+//            return itemRepository.findAll().stream().map(ItemMapper::toItemDto).collect(Collectors.toList());
+//        } else {
+//            if (optionalUser.isEmpty()) {
+//                throw new NotFoundException("Пользователь не найден");
+//            }
+//        }
+//        return getItemsByUser(userId, from, size);
+        return itemRepository.findAllByOwnerId(userId, PageRequest.of(from / size, size))
+                .stream()
+                .sorted(Comparator.comparing(Item::getId))
+                .map(ItemMapper::toItemDto)
+                .map(this::setLastAndNextBookingForItem)
+                .collect(Collectors.toList());
     }
 
     private List<ItemDto> getItemsByUser(Long userId, Long from, Long size) {

@@ -95,7 +95,7 @@ public class ItemControllerWebMvcTest {
 
     @Test
     void getAllTest() throws Exception {
-        when(itemService.getAll(anyLong(), anyLong(), anyLong())).thenReturn(List.of(itemDto));
+        when(itemService.getAll(anyLong(), anyInt(), anyInt())).thenReturn(List.of(itemDto));
 
         mockMvc.perform(get(PATH)
                         .characterEncoding(StandardCharsets.UTF_8)
